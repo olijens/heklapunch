@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+       android:layout_width="fill_parent"
+        android:layout_height="45dip"
+		android:textSize="24dp"
+		android:gravity="center"
+        android:text="@string/keppa_efst" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:onClick="punch"
+        android:text="@string/punch" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="200dip" >
+    </ListView>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:onClick="punch"
+        android:text="@string/senda_keppandi" />
+
+</LinearLayout>

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">heklapunch</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Hekla Punch</string>
+    <string name="hello_world">Hér koma smá upplýsingar um appið seinna meir ásamt leiðbeiningum.</string>
     <string name="menu_settings">Settings</string>
-
+    <string name="keppandi">Keppa</string>
+    <string name="keppa_efst">Keppa</string>
+    <string name="punch">Punch</string>
+    <string name="senda_keppandi">Senda gögn</string>
+    <string name="keppa_activity_title">Senda gögn</string>
 </resources>
