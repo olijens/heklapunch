@@ -1,9 +1,11 @@
 package is.heklapunch;
 
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
 
 public class OrganizeActivity extends Activity {
 	@Override
@@ -11,21 +13,22 @@ public class OrganizeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organize);
     }
+
 	//Go to create mode
     public void create(View view) {
-    	Intent k = new Intent(this, OrganizeModifyActivity.class);
-        startActivity(k);
+    	Intent m = new Intent(this, OrganizeModifyActivity.class);
+        startActivity(m);
     }
     
 	//Go to modify mode
     public void modify(View view) {
-    	Intent k = new Intent(this, OrganizeCreateActivity.class);
-        startActivity(k);
+    	Intent c = new Intent(this, OrganizeCreateActivity.class);
+        startActivity(c);
     }
     
 	//Go to recieve mode
-    public void recieve(View view) {
-    	Intent k = new Intent(this, OrganizeReceiveActivity.class);
-        startActivity(k);
+    public void receive(View view) {
+    	Intent r = new Intent(this, OrganizeReceiveActivity.class);
+        startActivity(r);
     }
 }

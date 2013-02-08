@@ -6,6 +6,7 @@
     <string name="menu_settings">Settings</string>
     <string name="keppandi">Keppa</string>
     <string name="keppa_efst">Keppa</string>
+    <string name="organize_button">Umsjón</string>
     <string name="organize_efst">Umsjón</string>
     <string name="organize_new_track_button">Gera nýja braut</string>
     <string name="organize_receive_data_button">Taka á móti gögnum</string>

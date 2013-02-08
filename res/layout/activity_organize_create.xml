@@ -16,14 +16,20 @@
         android:layout_height="50dip"
         android:layout_marginLeft="20dip"
         android:layout_marginRight="20dip"
-        android:onClick="create"
         android:text="@string/organize_create_qr_read" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="200dip" >
     </ListView>
-    <EditText android:id="@+id/editText1" android:layout_width="match_parent" android:layout_height="wrap_content" android:ems="10" android:hint="@string/organize_create_default_name">
+
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/organize_create_default_name" >
+
         <requestFocus />
     </EditText>
 
@@ -32,7 +38,6 @@
         android:layout_height="50dip"
         android:layout_marginLeft="20dip"
         android:layout_marginRight="20dip"
-        android:onClick="create"
         android:text="@string/save" />
 
 </LinearLayout>
