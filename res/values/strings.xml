@@ -21,4 +21,7 @@
     <string name="punch">Punch</string>
     <string name="senda_keppandi">Senda gögn</string>
     <string name="keppa_activity_title">Senda gögn</string>
+    <string name="title_activity_qr">QRActivity</string>
+    <string name="testqr_button">Prófa QR</string>
+
 </resources>

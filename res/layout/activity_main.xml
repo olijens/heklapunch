@@ -21,5 +21,11 @@
         android:layout_height="50dip"
         android:onClick="organize"
         android:text="@string/organize_button" />
+    
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:onClick="test_qr"
+        android:text="@string/testqr_button" />
 
 </LinearLayout>

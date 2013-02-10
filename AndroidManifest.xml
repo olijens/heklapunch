@@ -23,24 +23,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".KeppaActivity"
+            android:name="is.heklapunch.KeppaActivity"
             android:label="@string/keppa_activity_title" >
         </activity>
         <activity
-            android:name=".OrganizeActivity"
+            android:name="is.heklapunch.OrganizeActivity"
             android:label="@string/organize_efst" >
         </activity>
         <activity
-            android:name=".OrganizeCreateActivity"
+            android:name="is.heklapunch.OrganizeCreateActivity"
             android:label="@string/organize_new_track_title" >
         </activity>
         <activity
-            android:name=".OrganizeModifyActivity"
+            android:name="is.heklapunch.OrganizeModifyActivity"
             android:label="@string/organize_modify_data_title" >
         </activity>
         <activity
-            android:name=".OrganizeReceiveActivity"
+            android:name="is.heklapunch.OrganizeReceiveActivity"
             android:label="@string/organize_receive_data_title" >
+        </activity>
+        <activity
+            android:name="is.heklapunch.QRActivity"
+            android:label="@string/title_activity_qr" >
         </activity>
     </application>
 

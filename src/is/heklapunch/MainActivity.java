@@ -24,5 +24,11 @@ public class MainActivity extends Activity {
     	Intent o = new Intent(this, OrganizeActivity.class);
         startActivity(o);
     }
+    
+  //Go to organize mode
+    public void test_qr(View view) {
+    	Intent o = new Intent(this, QRActivity.class);
+        startActivity(o);
+    }
 
 }
