@@ -16,13 +16,13 @@ public class OrganizeActivity extends Activity {
 
 	//Go to create mode
     public void create(View view) {
-    	Intent m = new Intent(this, OrganizeModifyActivity.class);
+    	Intent m = new Intent(this, OrganizeCreateActivity.class);
         startActivity(m);
     }
     
 	//Go to modify mode
     public void modify(View view) {
-    	Intent c = new Intent(this, OrganizeCreateActivity.class);
+    	Intent c = new Intent(this, OrganizeModifyActivity.class);
         startActivity(c);
     }
     
