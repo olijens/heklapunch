@@ -83,7 +83,7 @@ public class OrganizeCreateActivity extends Activity {
 		}
 	}
 
-	// Go to organize mode
+	// Go to QR mode
 	public void read_qr(View view) {
 		IntentIntegrator integrator = new IntentIntegrator(this);
 		integrator.initiateScan();
@@ -109,5 +109,13 @@ public class OrganizeCreateActivity extends Activity {
 		}
 	}
 	
+	
+	//for SQLite testing
+	public void populateTable(){
+		String name = "testcourse";
+		int num = 0;
+		String QR = "testQR";
+		
+	}
 		
 }

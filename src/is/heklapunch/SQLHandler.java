@@ -83,6 +83,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 	// TODO: add handling for start/end stations, fix station numbering
 	public void addStation(String courseName, String QRvalue)
 			throws SQLException {
+		
 		SQLiteDatabase db = this.getWritableDatabase();
 		// generate and send command
 		ContentValues values = new ContentValues();
@@ -119,7 +120,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 			return null;
 	}
 
-	// Get single course values
+	// Get single course values, which is an arraylist of strings
 	public ArrayList<ArrayList<String>> getCoursebyName(String courseName)
 			throws SQLException {
 
@@ -147,6 +148,24 @@ public class SQLHandler extends SQLiteOpenHelper {
 		}
 		return results;
 	}
+	
+	//get the highest station number value from a course name
+	public int getMaxStationbyCourse(String courseName)
+			throws SQLException {
+
+		SQLiteDatabase db = this.getReadableDatabase();
+		// generate and send our query
+		Cursor cursor = db.rawQuery("SELECT MAX(" + ORGANIZE_STATION_NUMBER + ") FROM " + ORGANIZE_TABLE_NAME
+				+ " WHERE " + ORGANIZE_COURSE_NAME + "=" + courseName, null);
+		if (cursor != null) {
+			cursor.moveToFirst();
+			if (cursor.getCount() > 0) {
+				return cursor.getInt(1);
+			} else
+				return 0;
+		} else
+			return 0;
+	}
 
 	// Update a setting value in database
 	// updates the setting with name name to setting value
@@ -165,15 +184,15 @@ public class SQLHandler extends SQLiteOpenHelper {
 				new String[] { String.valueOf(name) });
 	}
 
-	// update course value in database
+	// update station courseName, currentStationNumber with newstationnumber and QRvalue
 	// TODO: make this work correctly.
 	public int updateStationbyNameandNumber(String courseName,
-			int stationNumber, String QRvalue) {
+			int currentStationNumber, int newStationNumber, String QRvalue) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		try {
 			values.put(ORGANIZE_COURSE_NAME, courseName);
-			values.put(ORGANIZE_STATION_NUMBER, stationNumber);
+			values.put(ORGANIZE_STATION_NUMBER, currentStationNumber);
 			values.put(ORGANIZE_QR_VALUE, QRvalue);
 		} catch (Exception e) {
 
