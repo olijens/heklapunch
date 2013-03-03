@@ -97,8 +97,8 @@ public class OrganizeCreateActivity extends Activity {
 		if (scanResult != null && scanResult.getContents().length() != 0) {
 			// handle scan result
 			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT).show();
-			//write to db
-			handler.addSetting("Stöð " + Integer.toString(handler.count()+1),scanResult.getContents());
+			//write to db, you need to change that
+			//handler.addSetting("Stöð " + Integer.toString(handler.count()+1),scanResult.getContents());
 			//redraw view
 			ViewGroup vg = (ViewGroup) findViewById (R.id.station_table);
 			vg.invalidate();

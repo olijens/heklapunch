@@ -15,9 +15,11 @@ public class SQLHandler extends SQLiteOpenHelper {
 
 	private static final int DB_VERSION = 2;
 	private static final String DATABASE_NAME = "hekladb";
-	private static final String SETTINGS_TABLE_NAME = "keppandi";
-	private static final String KEY_SETTING_NAME = "setting";
-	private static final String KEY_SETTING_VALUE = "value";
+	private static final String COMPETE_TABLE_NAME = "keppandi";
+	private static final String COMPETE_STATION_NAME = "stationname";
+	private static final String COMPETE_STATION_TIME = "stationtime";
+	private static final String COMPETE_QR_VALUE = "qrvalue";
+	private static final String COMPETE_GPS = "igps";
 	private static final String ORGANIZE_TABLE_NAME = "courses";
 	private static final String ORGANIZE_COURSE_NAME = "coursename";
 	private static final String ORGANIZE_STATION_NUMBER = "stationnumber";
@@ -33,9 +35,12 @@ public class SQLHandler extends SQLiteOpenHelper {
 	// for the course name(primary), station number and QR value
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String createCompetitorTable = "CREATE TABLE " + SETTINGS_TABLE_NAME
-				+ "(" + KEY_SETTING_NAME + " TEXT PRIMARY KEY,"
-				+ KEY_SETTING_VALUE + " TEXT" + ")";
+		String createCompetitorTable = "CREATE TABLE " + COMPETE_TABLE_NAME + "("
+				+ COMPETE_STATION_NAME +  " TEXT NOT NULL,"
+				+ COMPETE_STATION_TIME + " LONG NOT NULL,"
+				+ COMPETE_GPS + " INT NOT NULL,"
+				+ COMPETE_QR_VALUE + " TEXT NOT NULL)";
+		
 		String createCoursesTable = "CREATE TABLE " + ORGANIZE_TABLE_NAME + "("
 				+ ORGANIZE_COURSE_NAME + " TEXT NOT NULL,"
 				+ ORGANIZE_STATION_NUMBER + " INTEGER NOT NULL,"
@@ -47,7 +52,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS " + SETTINGS_TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + COMPETE_TABLE_NAME);
 		db.execSQL("DROP TABLE IF EXISTS " + ORGANIZE_TABLE_NAME);
 		onCreate(db);
 	}
@@ -63,21 +68,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 	// you do.
 	// value can be null.
 	// To update use updateSettingbyName(name, value)
-	public void addSetting(String name, String value) throws SQLException {
-		SQLiteDatabase db = this.getWritableDatabase();
-		// generate and send command
-		ContentValues values = new ContentValues();
-		try {
-			values.put(KEY_SETTING_NAME, name);
-			values.put(KEY_SETTING_VALUE, value);
-		} catch (Exception e) {
-
-		}
-		// if we want a throw use the line below, if not use the line after that
-		// db.insertOrThrow(TABLE_NAME, null, values);
-		db.insert(SETTINGS_TABLE_NAME, null, values);
-		db.close();
-	}
+	
 
 	// Since a course without a station is nonexistant, we only add in stations
 	// TODO: add handling for start/end stations, fix station numbering
@@ -101,25 +92,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 		db.close();
 	}
 
-	// Get value for single setting from database.
-	// returns string containing value of setting with name name.
-	// if that setting does not exist or has a null value, returns null
-	public String getSettingbyName(String name) throws SQLException {
-		SQLiteDatabase db = this.getReadableDatabase();
-		// generate and send our query
-		Cursor cursor = db.query(SETTINGS_TABLE_NAME, new String[] {
-				KEY_SETTING_NAME, KEY_SETTING_VALUE }, KEY_SETTING_NAME + "=?",
-				new String[] { String.valueOf(name) }, null, null, null, null);
-		if (cursor != null) {
-			cursor.moveToFirst();
-			if (cursor.getCount() > 0) {
-				return cursor.getString(1);
-			} else
-				return null;
-		} else
-			return null;
-	}
-
+	
 	// Get single course values, which is an arraylist of strings
 	public ArrayList<ArrayList<String>> getCoursebyName(String courseName)
 			throws SQLException {
@@ -167,22 +140,6 @@ public class SQLHandler extends SQLiteOpenHelper {
 			return 0;
 	}
 
-	// Update a setting value in database
-	// updates the setting with name name to setting value
-	// Will not add entries if they are missing.
-	public int updateSettingbyName(String name, String value) {
-		SQLiteDatabase db = this.getWritableDatabase();
-		ContentValues values = new ContentValues();
-		try {
-			values.put(KEY_SETTING_NAME, name);
-			values.put(KEY_SETTING_VALUE, value);
-		} catch (Exception e) {
-
-		}
-		return db.update(SETTINGS_TABLE_NAME, values,
-				KEY_SETTING_NAME + " = ?",
-				new String[] { String.valueOf(name) });
-	}
 
 	// update station courseName, currentStationNumber with newstationnumber and QRvalue
 	// TODO: make this work correctly.
@@ -201,16 +158,6 @@ public class SQLHandler extends SQLiteOpenHelper {
 				+ " = ?", new String[] { String.valueOf(QRvalue) });
 	}
 
-	// Deletes setting with name name from database
-	// does nothing if setting does not exist, or name = null
-	public void deleteSettingbyName(String name) {
-		if (name != null) {
-			SQLiteDatabase db = this.getWritableDatabase();
-			db.delete(SETTINGS_TABLE_NAME, KEY_SETTING_NAME + " = ? ",
-					new String[] { String.valueOf(name) });
-			db.close();
-		}
-	}
 
 	// Deletes course by name
 	// TODO: make station numbering safe
@@ -226,17 +173,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 			db.close();
 		}
 	}
-
-	// Gets the number of rows already in the table
-	public int count() {
-		SQLiteDatabase db = this.getWritableDatabase();
-		String count = "SELECT * FROM " + SETTINGS_TABLE_NAME;
-		Cursor mcursor = db.rawQuery(count, null);
-		int icount = mcursor.getCount();
-		db.close();
-		return icount;
-	}
-
+	
 	// Gets the number of rows already in the course
 	public int stationCount(String courseName) {
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -248,18 +185,53 @@ public class SQLHandler extends SQLiteOpenHelper {
 		return icount;
 	}
 
+		
+	/* 
+	 * 
+	 * Logi notar þessu föll 
+	 * 
+	 * 
+	 * */
+
+	//add a staion
+	public void addStation(String name,  long time, String qr, boolean gps) throws SQLException {
+		SQLiteDatabase db = this.getWritableDatabase();
+		// generate and send command
+		ContentValues values = new ContentValues();
+		try {
+			values.put(COMPETE_STATION_NAME, name);
+			values.put(COMPETE_STATION_TIME, time);
+			values.put(COMPETE_QR_VALUE, qr);
+			values.put(COMPETE_GPS, gps);
+		} catch (Exception e) {
+
+		}
+		// if we want a throw use the line below, if not use the line after that
+		// db.insertOrThrow(ORGANIZE_TABLE_NAME, null, values);
+		db.insert(COMPETE_TABLE_NAME, null, values);
+		db.close();
+	}
+
+	// Delete all stations
+	public void deleteAll() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(COMPETE_TABLE_NAME, null, null);
+		db.close();
+	}
+
 	// Get all values from the table
 	public ArrayList<ArrayList<String>> getAllStations() {
 
 		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
 		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor cursor = db.rawQuery("SELECT * FROM " + SETTINGS_TABLE_NAME
-				+ " ORDER BY " + KEY_SETTING_NAME, null);
+		Cursor cursor = db.rawQuery("SELECT * FROM " + COMPETE_TABLE_NAME
+				+ " ORDER BY " + COMPETE_STATION_TIME, null);
 		if (cursor.moveToFirst()) {
 			do {
 				ArrayList<String> station = new ArrayList<String>();
 				station.add(cursor.getString(0));
-				station.add(cursor.getString(1));
+				station.add(Long.toString(cursor.getLong(1)));
+				station.add(cursor.getString(3));
 				results.add(station);
 			} while (cursor.moveToNext());
 
@@ -270,5 +242,19 @@ public class SQLHandler extends SQLiteOpenHelper {
 		db.close();
 		return results;
 	}
+
+	
+	// Gets the number of rows already in the table
+	public int count() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		String count = "SELECT * FROM " + COMPETE_TABLE_NAME;
+		Cursor mcursor = db.rawQuery(count, null);
+		int icount = mcursor.getCount();
+		db.close();
+		return icount;
+	}
+	
+	
+	
 
 }

@@ -43,5 +43,12 @@
         android:layout_marginRight="20dip"
         android:onClick="punch"
         android:text="@string/senda_keppandi" />
+     <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:onClick="delete"
+        android:text="@string/delete_keppandi" />
 
 </LinearLayout>
