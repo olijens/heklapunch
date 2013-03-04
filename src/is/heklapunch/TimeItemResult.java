@@ -7,12 +7,7 @@ package is.heklapunch;
 
 public class TimeItemResult {
 
-	public String tz;
-	public int hour;
-	public String datetime;
-	public int second;
-	public boolean error;
-	public int minute;
-
-	
+	public String time;
+	public long milliseconds_since_epoch;
+	public String date;
 }

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 //TODO: IMPORTANT! the station numbering scheme is not safe! it needs to have an appropriate indexing system, or a update its counts on delete/update! fix asap.
 
@@ -19,7 +20,8 @@ public class SQLHandler extends SQLiteOpenHelper {
 	private static final String COMPETE_STATION_NAME = "stationname";
 	private static final String COMPETE_STATION_TIME = "stationtime";
 	private static final String COMPETE_QR_VALUE = "qrvalue";
-	private static final String COMPETE_GPS = "igps";
+	private static final String COMPETE_TIME_CHECK = "timecheck";
+	private static final String COMPETE_GPS_LOCATION = "gps_location";
 	private static final String ORGANIZE_TABLE_NAME = "courses";
 	private static final String ORGANIZE_COURSE_NAME = "coursename";
 	private static final String ORGANIZE_STATION_NUMBER = "stationnumber";
@@ -38,8 +40,9 @@ public class SQLHandler extends SQLiteOpenHelper {
 		String createCompetitorTable = "CREATE TABLE " + COMPETE_TABLE_NAME + "("
 				+ COMPETE_STATION_NAME +  " TEXT NOT NULL,"
 				+ COMPETE_STATION_TIME + " LONG NOT NULL,"
-				+ COMPETE_GPS + " INT NOT NULL,"
-				+ COMPETE_QR_VALUE + " TEXT NOT NULL)";
+				+ COMPETE_TIME_CHECK + " INT NOT NULL,"
+				+ COMPETE_QR_VALUE + " TEXT NOT NULL,"
+				+ COMPETE_GPS_LOCATION	 + " TEXT NOT NULL)";
 		
 		String createCoursesTable = "CREATE TABLE " + ORGANIZE_TABLE_NAME + "("
 				+ ORGANIZE_COURSE_NAME + " TEXT NOT NULL,"
@@ -194,7 +197,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 	 * */
 
 	//add a staion
-	public void addStation(String name,  long time, String qr, boolean gps) throws SQLException {
+	public void addStation(String name,  long time, String qr, boolean check, String gps) throws SQLException {
 		SQLiteDatabase db = this.getWritableDatabase();
 		// generate and send command
 		ContentValues values = new ContentValues();
@@ -202,7 +205,8 @@ public class SQLHandler extends SQLiteOpenHelper {
 			values.put(COMPETE_STATION_NAME, name);
 			values.put(COMPETE_STATION_TIME, time);
 			values.put(COMPETE_QR_VALUE, qr);
-			values.put(COMPETE_GPS, gps);
+			values.put(COMPETE_TIME_CHECK, check);
+			values.put(COMPETE_GPS_LOCATION, gps);
 		} catch (Exception e) {
 
 		}
@@ -232,7 +236,9 @@ public class SQLHandler extends SQLiteOpenHelper {
 				station.add(cursor.getString(0));
 				station.add(Long.toString(cursor.getLong(1)));
 				station.add(cursor.getString(3));
+				station.add(cursor.getString(4));
 				results.add(station);
+				Log.d("Loga test", cursor.getString(4));
 			} while (cursor.moveToNext());
 
 			if (cursor != null && !cursor.isClosed()) {
