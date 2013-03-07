@@ -16,6 +16,7 @@
     <string name="organize_modify_data_title">Vinna með gögn</string>
     <string name="organize_create_qr_read">Lesa inn QR kóða</string>
     <string name="organize_create_default_name">Nafn brautar</string>
+    <string name="organize_create_station_default_name">Nafn stöðvar (optional)</string>
     <string name="organize_create_spinner">Veldu braut</string>
     <string name="save">Vista</string>
     <string name="punch">Punch</string>

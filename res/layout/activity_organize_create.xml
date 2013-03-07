@@ -5,10 +5,25 @@
     android:orientation="vertical" >
 
     <TextView
-       android:layout_width="fill_parent"
+        android:layout_width="fill_parent"
         android:layout_height="45dip"
-		android:gravity="center"
-        android:text="@string/organize_efst" android:textSize="24sp"/>
+        android:gravity="center"
+        android:text="@string/organize_efst"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/editTextCourseName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/organize_create_default_name" />
+
+    <EditText
+        android:id="@+id/EditTextStationName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/organize_create_station_default_name" />
 
     <Button
         android:layout_width="match_parent"
@@ -17,15 +32,36 @@
         android:layout_marginRight="20dip"
         android:onClick="read_qr"
         android:text="@string/organize_create_qr_read" />
-    
+
+<!--    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="testInsert"
+        android:text="Testinsert" /> -->
+
     <ScrollView
-        android:id="@+id/ScrollView_keppa"
+        android:id="@+id/Create_Scroll_View"
         android:layout_width="match_parent"
-        android:layout_height="0dip" android:layout_weight="0.61" android:fillViewport="true">
+        android:layout_height="0dip"
+        android:layout_weight="0.46"
+        android:fillViewport="true" >
+
+        <TableLayout
+            android:id="@+id/Create_Station_Table"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </TableLayout>
     </ScrollView>
-    <EditText android:id="@+id/editText1" android:layout_width="match_parent" android:layout_height="wrap_content" android:ems="10" android:hint="@string/organize_create_default_name">
-        <requestFocus />
-    </EditText>
-    <Button android:layout_width="wrap_content" android:layout_height="50dip" android:layout_marginLeft="20dip" android:layout_marginRight="20dip" android:onClick="punch" android:text="@string/save"/>
+
+    <Button
+        android:id="@+id/Create_Save"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:layout_weight="0.00"
+        android:onClick="saveList"
+        android:text="@string/save" />
 
 </LinearLayout>

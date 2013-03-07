@@ -20,44 +20,114 @@ import android.util.TypedValue;
 import android.view.ViewGroup.LayoutParams;
 
 public class OrganizeCreateActivity extends Activity {
-	
+
 	TableLayout station_table;
 	SQLHandler handler;
-	EditText nameField;
+	EditText stationNameField;
+	EditText courseNameField;
 	String stationName = "";
-	
+	ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
+	int stationNumber = 1;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_organize_create);
-		//create database object
+		// create database object
 		handler = new SQLHandler(this);
-		nameField   = (EditText)findViewById(R.id.editText1);
-		
-		//make table
-		station_table=(TableLayout)findViewById(R.id.station_table);
+		courseNameField = (EditText) findViewById(R.id.editTextCourseName);
+		stationNameField = (EditText) findViewById(R.id.EditTextStationName);
+
+		// make table
+		station_table = (TableLayout) findViewById(R.id.Create_Station_Table);
 		this.fillTable();
 	}
-	
-	//fill table with content
-	public void fillTable() {		
-	
+
+	//this part is needed because i have no phone.... i need a phone :(
+	public void testInsert(View view) {
+		
+		ArrayList<String> tempStation = new ArrayList<String>();
+
+		int scanresult1 = 1234;
+
+		if (scanresult1 != 0 ) {
+			// handle scan result
+			//Toast.makeText(this, scanresult1, Toast.LENGTH_SHORT)
+					//.show();
+			// write to stationList
+			if (stationNameField.getText().toString() != null) {
+				//add station number
+				tempStation.add(String.valueOf(stationNumber));
+				//add station name
+				tempStation.add(stationNameField.getText().toString());
+				//add QR code
+				tempStation.add("gpslol" + stationNumber);
+				//add GPS
+				//TODO: add working gps!
+				tempStation.add("12345");
+				stationNumber++;
+			}
+			else{
+				tempStation.add(String.valueOf(stationNumber));
+				tempStation.add("Stöð nr. " + stationNumber);
+				tempStation.add("gpslol" + stationNumber);
+				tempStation.add("12345");
+				stationNumber++;
+			}
+			stationList.add(tempStation);
+			// redraw view
+			ViewGroup vg = (ViewGroup) findViewById(R.id.Create_Scroll_View);
+			vg.invalidate();
+			scanresult1++;
+			//this.fillTable();
+		} 
+		else {
+			//Toast.makeText(this, "No scan", Toast.LENGTH_SHORT).show();
+		}
+		
+		
+		/*handler.deleteStationbyID(11);
+		handler.deleteStationbyID(12);
+		handler.deleteStationbyID(13);
+		handler.deleteStationbyID(14);
+		handler.deleteStationbyID(15);
+		handler.deleteStationbyID(16);
+		handler.deleteStationbyID(17);
+		handler.deleteStationbyID(18);
+		handler.deleteStationbyID(19);
+		handler.deleteStationbyID(20);
+
+		handler.addStation("testcourse", 1, "testSname1", 1, "test qr 12312",
+				"test gps 12341");
+		handler.addStation("testcourse", 1, "testSname2", 2, "test qr 12312",
+				"test gps 12341");
+		handler.addStation("testcourse", 1, "testSname3", 3, "test qr 123122",
+				"test gps 12343");
+		handler.addStation("testcourse", 1, "testSname4", 4, "test qr 123123",
+				"test gps 12344");
+		handler.addStation("testcourse", 1, "testSname5", 5, "test qr 123124",
+				"test gps 12345");*/
+	}
+
+	// fill table with content, we do NOT read from the database here! we only
+	// work
+	// with new data in the stationList object
+	public void fillTable() {
+
 		TableRow row;
 		TextView t1, t2;
-		//Converting to dip unit
+		// Converting to dip unit
 		int dip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
 				(float) 1, getResources().getDisplayMetrics());
-		
-		stationName = nameField.getText().toString();
-		
-		ArrayList<ArrayList<String>> results =  handler.getCoursebyName(stationName);
-		
-		Iterator<ArrayList<String>> i = results.iterator();
 
-		while(i.hasNext()) {
-			
+		stationName = stationNameField.getText().toString();
+
+		Iterator<ArrayList<String>> i = stationList.iterator();
+
+		while (i.hasNext()) {
+
 			ArrayList<?> entry = i.next();
-			
+
 			row = new TableRow(this);
 
 			t1 = new TextView(this);
@@ -82,6 +152,21 @@ public class OrganizeCreateActivity extends Activity {
 
 		}
 	}
+	
+	//Save list contents to database
+	public void saveList(View view){
+		String courseTitle = courseNameField.getText().toString();
+		int courseID = handler.getMaxCourseID() + 1;
+		Iterator<ArrayList<String>> i = stationList.iterator();
+		while (i.hasNext()) {
+			ArrayList<?> entry = i.next();
+			int stationNumber = Integer.valueOf(entry.get(0).toString());
+			String stationTitle = entry.get(1).toString();
+			String QRValue = entry.get(2).toString();
+			String GPSValue = entry.get(3).toString();
+			handler.addStation(courseTitle, courseID, stationTitle, stationNumber, QRValue, GPSValue);
+		}
+	}
 
 	// Go to QR mode
 	public void read_qr(View view) {
@@ -91,31 +176,43 @@ public class OrganizeCreateActivity extends Activity {
 
 	// QR Scan result
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		
-		IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-		
+
+		ArrayList<String> tempStation = new ArrayList<String>();
+
+		IntentResult scanResult = IntentIntegrator.parseActivityResult(
+				requestCode, resultCode, intent);
+
 		if (scanResult != null && scanResult.getContents().length() != 0) {
 			// handle scan result
-			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT).show();
-			//write to db, you need to change that
-			//handler.addSetting("Stöð " + Integer.toString(handler.count()+1),scanResult.getContents());
-			//redraw view
-			ViewGroup vg = (ViewGroup) findViewById (R.id.station_table);
+			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT)
+					.show();
+			// write to stationList
+			if (stationNameField.getText().toString() != null) {
+				//add station number
+				tempStation.add(String.valueOf(stationNumber));
+				//add station name
+				tempStation.add(stationNameField.getText().toString());
+				//add QR code
+				tempStation.add(String.valueOf(scanResult.getContents()));
+				//add GPS
+				//TODO: add working gps!
+				tempStation.add("12345");
+				stationNumber++;
+			}
+			else{
+				tempStation.add(String.valueOf(stationNumber));
+				tempStation.add("Stöð nr. " + stationNumber);
+				tempStation.add(String.valueOf(scanResult.getContents()));
+				tempStation.add("12345");
+				stationNumber++;
+			}
+			stationList.add(tempStation);
+
+			// redraw view
+			ViewGroup vg = (ViewGroup) findViewById(R.id.station_table);
 			vg.invalidate();
-			
-		} 
-		else {
+		} else {
 			Toast.makeText(this, "No scan", Toast.LENGTH_SHORT).show();
 		}
 	}
-	
-	
-	//for SQLite testing
-	public void populateTable(){
-		String name = "testcourse";
-		int num = 0;
-		String QR = "testQR";
-		
-	}
-		
 }

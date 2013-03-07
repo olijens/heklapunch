@@ -23,9 +23,13 @@ public class SQLHandler extends SQLiteOpenHelper {
 	private static final String COMPETE_TIME_CHECK = "timecheck";
 	private static final String COMPETE_GPS_LOCATION = "gps_location";
 	private static final String ORGANIZE_TABLE_NAME = "courses";
+	private static final String ORGANIZE_STATION_ID = "stationid";
 	private static final String ORGANIZE_COURSE_NAME = "coursename";
+	private static final String ORGANIZE_COURSE_ID = "coursenumber";
 	private static final String ORGANIZE_STATION_NUMBER = "stationnumber";
+	private static final String ORGANIZE_STATION_NAME = "stationname";
 	private static final String ORGANIZE_QR_VALUE = "qrvalue";
+	private static final String ORGANIZE_GPS_VALUE = "gpsvalue";
 
 	// required constructor
 	public SQLHandler(Context context) {
@@ -37,18 +41,22 @@ public class SQLHandler extends SQLiteOpenHelper {
 	// for the course name(primary), station number and QR value
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String createCompetitorTable = "CREATE TABLE " + COMPETE_TABLE_NAME + "("
-				+ COMPETE_STATION_NAME +  " TEXT NOT NULL,"
-				+ COMPETE_STATION_TIME + " LONG NOT NULL,"
-				+ COMPETE_TIME_CHECK + " INT NOT NULL,"
-				+ COMPETE_QR_VALUE + " TEXT NOT NULL,"
-				+ COMPETE_GPS_LOCATION	 + " TEXT NOT NULL)";
-		
-		String createCoursesTable = "CREATE TABLE " + ORGANIZE_TABLE_NAME + "("
-				+ ORGANIZE_COURSE_NAME + " TEXT NOT NULL,"
-				+ ORGANIZE_STATION_NUMBER + " INTEGER NOT NULL,"
-				+ ORGANIZE_QR_VALUE + " TEXT, " + "PRIMARY KEY ("
-				+ ORGANIZE_COURSE_NAME + ", " + ORGANIZE_STATION_NUMBER + "))";
+		String createCompetitorTable = "CREATE TABLE " + COMPETE_TABLE_NAME
+				+ "(" + COMPETE_STATION_NAME + " TEXT NOT NULL,"
+				+ COMPETE_STATION_TIME + " LONG NOT NULL," + COMPETE_TIME_CHECK
+				+ " INT NOT NULL," + COMPETE_QR_VALUE + " TEXT NOT NULL,"
+				+ COMPETE_GPS_LOCATION + " TEXT NOT NULL)";
+
+		String createCoursesTable = "CREATE TABLE " + ORGANIZE_TABLE_NAME
+				+ " (" + ORGANIZE_STATION_ID
+				+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ ORGANIZE_STATION_NAME + " TEXT, " + ORGANIZE_STATION_NUMBER
+				+ " INTEGER, " + ORGANIZE_COURSE_ID + " INTEGER NOT NULL, "
+				+ ORGANIZE_COURSE_NAME + " TEXT NOT NULL, " + ORGANIZE_QR_VALUE
+				+ " TEXT NOT NULL, " + ORGANIZE_GPS_VALUE + " TEXT, "
+				+ "UNIQUE (" + ORGANIZE_COURSE_ID + ", " + ORGANIZE_QR_VALUE
+				+ " ), " + "UNIQUE (" + ORGANIZE_COURSE_ID + ", "
+				+ ORGANIZE_STATION_NUMBER + " )" + " )";
 		db.execSQL(createCompetitorTable);
 		db.execSQL(createCoursesTable);
 	}
@@ -60,32 +68,30 @@ public class SQLHandler extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-	// TODO: i have uglified this code, but dont have time to refactor
-	// everything and make general purpose
-	// TODO: CRUD methods, so i just duplicated the existing ones. we can fix
-	// this later.
-
 	// CRUD
 	// Add a new setting with name name and value value to the database.
 	// do not try to add a value that already exists, logcat gives you errors if
 	// you do.
 	// value can be null.
 	// To update use updateSettingbyName(name, value)
-	
 
 	// Since a course without a station is nonexistant, we only add in stations
 	// TODO: add handling for start/end stations, fix station numbering
-	public void addStation(String courseName, String QRvalue)
+	// ***************untested
+	public void addStation(String courseName, int courseID, String stationName,
+			int stationNumber, String QRValue, String GPSValue)
 			throws SQLException {
-		
+
 		SQLiteDatabase db = this.getWritableDatabase();
 		// generate and send command
 		ContentValues values = new ContentValues();
 		try {
-			int stations = stationCount(courseName);
+			values.put(ORGANIZE_STATION_NAME, stationName);
+			values.put(ORGANIZE_STATION_NUMBER, stationNumber);
+			values.put(ORGANIZE_COURSE_ID, courseID);
 			values.put(ORGANIZE_COURSE_NAME, courseName);
-			values.put(ORGANIZE_STATION_NUMBER, stations);
-			values.put(ORGANIZE_QR_VALUE, QRvalue);
+			values.put(ORGANIZE_QR_VALUE, QRValue);
+			values.put(ORGANIZE_GPS_VALUE, GPSValue);
 		} catch (Exception e) {
 
 		}
@@ -95,109 +101,111 @@ public class SQLHandler extends SQLiteOpenHelper {
 		db.close();
 	}
 
-	
-	// Get single course values, which is an arraylist of strings
-	public ArrayList<ArrayList<String>> getCoursebyName(String courseName)
+	// Get single courses' stations' values, which is an arraylist of arraylists
+	// strings
+	// **********untested**********
+	public ArrayList<ArrayList<String>> getCoursebyID(int courseID)
 			throws SQLException {
 
 		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
 		SQLiteDatabase db = this.getWritableDatabase();
 		try {
 			Cursor cursor = db.rawQuery("SELECT * FROM " + ORGANIZE_TABLE_NAME
-					+ " WHERE " + ORGANIZE_COURSE_NAME + "=" + courseName
+					+ " WHERE " + ORGANIZE_COURSE_ID + "=" + courseID
 					+ " ORDER BY " + ORGANIZE_STATION_NUMBER, null);
-		if (cursor.moveToFirst()) {
-			do {
-				ArrayList<String> station = new ArrayList<String>();
-				station.add(cursor.getString(0));
-				station.add(cursor.getString(1));
-				results.add(station);
-			} while (cursor.moveToNext());
+			if (cursor.moveToFirst()) {
+				do {
+					ArrayList<String> station = new ArrayList<String>();
+					station.add(cursor.getString(0));
+					station.add(cursor.getString(1));
+					station.add(cursor.getString(2));
+					station.add(cursor.getString(4));
+					station.add(cursor.getString(5));
+					station.add(cursor.getString(6));
+					results.add(station);
+				} while (cursor.moveToNext());
 
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
+				}
 			}
-		}
-		db.close();
+			db.close();
 		} catch (Exception e) {
 
 		}
 		return results;
 	}
-	
-	//get the highest station number value from a course name
-	public int getMaxStationbyCourse(String courseName)
-			throws SQLException {
 
-		SQLiteDatabase db = this.getReadableDatabase();
-		// generate and send our query
-		Cursor cursor = db.rawQuery("SELECT MAX(" + ORGANIZE_STATION_NUMBER + ") FROM " + ORGANIZE_TABLE_NAME
-				+ " WHERE " + ORGANIZE_COURSE_NAME + "=" + courseName, null);
-		if (cursor != null) {
-			cursor.moveToFirst();
-			if (cursor.getCount() > 0) {
-				return cursor.getInt(1);
-			} else
-				return 0;
-		} else
-			return 0;
-	}
+	// get the highest station number value from a course name
+	/*
+	 * DEPRICATED public int getMaxStationbyCourse(String courseName) throws
+	 * SQLException {
+	 * 
+	 * SQLiteDatabase db = this.getReadableDatabase(); // generate and send our
+	 * query Cursor cursor = db.rawQuery("SELECT MAX(" + ORGANIZE_STATION_NUMBER
+	 * + ") FROM " + ORGANIZE_TABLE_NAME + " WHERE " + ORGANIZE_COURSE_NAME +
+	 * "=" + courseName, null); if (cursor != null) { cursor.moveToFirst(); if
+	 * (cursor.getCount() > 0) { return cursor.getInt(1); } else return 0; }
+	 * else return 0; }
+	 */
 
-
-	// update station courseName, currentStationNumber with newstationnumber and QRvalue
+	// update station with id stationID, currentStationNumber with
+	// newstationnumber and QRvalue
 	// TODO: make this work correctly.
-	public int updateStationbyNameandNumber(String courseName,
-			int currentStationNumber, int newStationNumber, String QRvalue) {
+	public int updateStation(int stationID, String newCourseName,
+			int newStationNumber, String newQRvalue, String newGPSValue) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		try {
-			values.put(ORGANIZE_COURSE_NAME, courseName);
-			values.put(ORGANIZE_STATION_NUMBER, currentStationNumber);
-			values.put(ORGANIZE_QR_VALUE, QRvalue);
+			values.put(ORGANIZE_COURSE_NAME, newCourseName);
+			values.put(ORGANIZE_STATION_NUMBER, newStationNumber);
+			values.put(ORGANIZE_QR_VALUE, newQRvalue);
+			values.put(ORGANIZE_GPS_VALUE, newGPSValue);
 		} catch (Exception e) {
 
 		}
-		return db.update(ORGANIZE_TABLE_NAME, values, ORGANIZE_STATION_NUMBER
-				+ " = ?", new String[] { String.valueOf(QRvalue) });
+		return db.update(ORGANIZE_TABLE_NAME, values, ORGANIZE_STATION_ID
+				+ " = ?", new String[] { String.valueOf(stationID) });
 	}
 
-
-	// Deletes course by name
-	// TODO: make station numbering safe
-	// TODO: create "delete station by name" method
-	public void deleteStationbyNameandNumber(String name, int number) {
-		if (name != null) {
-			SQLiteDatabase db = this.getWritableDatabase();
-			db.delete(
-					ORGANIZE_TABLE_NAME,
-					ORGANIZE_COURSE_NAME + ORGANIZE_STATION_NUMBER + " = ? ",
-					new String[] { String.valueOf(name)
-							+ String.valueOf(number) });
-			db.close();
-		}
+	// Deletes station by name
+	public void deleteStationbyID(int ID) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(ORGANIZE_TABLE_NAME, ORGANIZE_STATION_ID + " = ? ",
+				new String[] { String.valueOf(ID) });
+		db.close();
 	}
-	
+
 	// Gets the number of rows already in the course
-	public int stationCount(String courseName) {
+	public int stationCount(int courseID) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		String count = "SELECT * FROM " + ORGANIZE_TABLE_NAME + "WHERE "
-				+ ORGANIZE_TABLE_NAME + " = " + courseName;
+				+ ORGANIZE_TABLE_NAME + " = " + courseID;
 		Cursor mcursor = db.rawQuery(count, null);
 		int icount = mcursor.getCount();
 		db.close();
 		return icount;
 	}
 
-		
-	/* 
-	 * 
-	 * Logi notar þessu föll 
-	 * 
-	 * 
-	 * */
+	// returns highest course ID number
+	public int getMaxCourseID() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		String count = "SELECT MAX (" + ORGANIZE_COURSE_ID + ") FROM "
+				+ ORGANIZE_TABLE_NAME;
+		Cursor mcursor = db.rawQuery(count, null);
+		int cCount = mcursor.getCount();
+		db.close();
+		return cCount;
+	}
 
-	//add a staion
-	public void addStation(String name,  long time, String qr, boolean check, String gps) throws SQLException {
+	/*
+	 * 
+	 * Logi notar þessu föll
+	 */
+
+	// add a staion
+	public void addStation(String name, long time, String qr, boolean check,
+			String gps) throws SQLException {
 		SQLiteDatabase db = this.getWritableDatabase();
 		// generate and send command
 		ContentValues values = new ContentValues();
@@ -249,7 +257,6 @@ public class SQLHandler extends SQLiteOpenHelper {
 		return results;
 	}
 
-	
 	// Gets the number of rows already in the table
 	public int count() {
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -259,8 +266,5 @@ public class SQLHandler extends SQLiteOpenHelper {
 		db.close();
 		return icount;
 	}
-	
-	
-	
 
 }
