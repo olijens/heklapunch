@@ -104,8 +104,14 @@ public class OrganizeCreateActivity extends Activity {
 
 	// Go to QR mode
 	public void read_qr(View view) {
-		IntentIntegrator integrator = new IntentIntegrator(this);
-		integrator.initiateScan();
+		//this si the test code
+		Intent o = new Intent(this, TestQRActivity.class);
+        startActivity(o);
+		
+		//commented out real code
+		/*IntentIntegrator integrator = new IntentIntegrator(this);
+		integrator.initiateScan();*/
+		
 	}
 
 	// QR Scan result
