@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,9 +22,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -36,17 +33,20 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateFormat;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.text.format.DateFormat;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.ViewGroup.LayoutParams;
 
 import com.google.gson.Gson;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 
 public class KeppaActivity extends Activity {
@@ -69,10 +69,10 @@ public class KeppaActivity extends Activity {
 		//make table
 		station_table=(TableLayout)findViewById(R.id.station_table);
 		this.fillTable();
-		
 	}
 	
 	//fill table with content
+	@SuppressLint("NewApi")
 	public void fillTable() {		
 	
 		TableRow row;
@@ -129,6 +129,12 @@ public class KeppaActivity extends Activity {
 	}
 
 	// Go to organize mode
+	public void send_info(View view) {
+		Intent o = new Intent(this, SendActivity.class);
+        startActivity(o);
+	}
+	
+	// Go to organize mode
 	public void read_qr(View view) {
 		IntentIntegrator integrator = new IntentIntegrator(this);
 		integrator.initiateScan();
@@ -154,6 +160,7 @@ public class KeppaActivity extends Activity {
 			if(isOnline()){				
 				
 				//Use json service http://json-time.appspot.com/time.json?tz=GMT
+				@SuppressLint("NewApi")
 				class GetTimeFromServer extends AsyncTask<String, Void, String> {
 
 					public KeppaActivity activity;

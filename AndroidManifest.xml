@@ -5,13 +5,15 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="5"
         android:targetSdkVersion="16" />
 
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -54,6 +56,18 @@
         <activity
             android:name="is.heklapunch.TestQRActivity"
             android:label="TestQR" >
+        </activity>
+        <activity
+            android:name="is.heklapunch.SendActivity"
+            android:label="@string/title_activity_send" >
+        </activity>
+        <activity
+            android:name="is.heklapunch.BlueToothActivity"
+            android:label="@string/title_activity_blue_tooth" >
+        </activity>
+        <activity
+            android:name="is.heklapunch.BtDeviceListActivity"
+            android:label="@string/title_activity_blue_tooth" >
         </activity>
     </application>
 
