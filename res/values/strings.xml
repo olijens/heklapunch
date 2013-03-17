@@ -22,12 +22,13 @@
     <string name="punch">Punch</string>
     <string name="senda_keppandi">Senda gögn</string>
     <string name="delete_keppandi">Henda stöðvum</string>
-    <string name="keppa_activity_title">Senda gögn</string>
+    <string name="keppa_activity_title">Keppnishamur</string>
     <string name="title_activity_qr">QRActivity</string>
     <string name="testqr_button">Prófa QR</string>
     <string name="title_activity_send">SendActivity</string>
     <string name="send_data">Senda Gögn</string>
     <string name="title_activity_blue_tooth">BlueToothActivity</string>
+      <string name="saved_name">Nafn keppanda:</string>
     
         <!--  DeviceListActivity -->
     <string name="scanning">scanning for devices...</string>
