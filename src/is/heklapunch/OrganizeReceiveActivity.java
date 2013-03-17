@@ -11,7 +11,9 @@ public class OrganizeReceiveActivity extends BlueToothActivity {
 		
 		ensureDiscoverable();
 		Intent serverIntent = new Intent(this, BtDeviceListActivity.class);
-		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+//		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+		
 		
 		setContentView(R.layout.activity_organize_receive);
 	}

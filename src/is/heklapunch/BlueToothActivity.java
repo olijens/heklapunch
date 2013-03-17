@@ -149,8 +149,6 @@ public class BlueToothActivity extends Activity {
         if (mBluetoothAdapter.getScanMode() !=
             BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
         	
-        	if(DEBUG) Log.d(TAG, " ENSURING... ");
-        	
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERABLE_SECONDS);
             startActivity(discoverableIntent);
@@ -158,42 +156,16 @@ public class BlueToothActivity extends Activity {
     }
     
     protected void connectDevice(Intent data, boolean secure) {
+    	
+    	if(DEBUG) Log.d(TAG, " connectDevice");
+    	
         // Get the device MAC address
         String address = data.getExtras()
             .getString(BtDeviceListActivity.EXTRA_DEVICE_ADDRESS);
         // Get the BLuetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
-//        mChatService.connect(device, secure);
-    }
-	
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(DEBUG) Log.d(TAG, "onActivityResult " + resultCode);
-        switch (requestCode) {
-        case REQUEST_CONNECT_DEVICE_SECURE:
-            // When DeviceListActivity returns with a device to connect
-            if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data, true);
-            }
-            break;
-        case REQUEST_CONNECT_DEVICE_INSECURE:
-            // When DeviceListActivity returns with a device to connect
-            if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data, false);
-            }
-            break;
-        case REQUEST_ENABLE_BT:
-            // When the request to enable Bluetooth returns
-            if (resultCode == Activity.RESULT_OK) {
-                // Bluetooth is now enabled, so set up a chat session
-//                setupChat();
-            } else {
-                // User did not enable Bluetooth or an error occured
-                Log.d(TAG, "BT not enabled");
-//                Toast.makeText(this, R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }
+        connect(device, secure);
     }
 
 	@Override
@@ -202,28 +174,6 @@ public class BlueToothActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_blue_tooth, menu);
 		return true;
 	}
-	
-	@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent serverIntent = null;
-//        switch (item.getItemId()) {
-//        case R.id.secure_connect_scan:
-//            // Launch the DeviceListActivity to see devices and do scan
-//            serverIntent = new Intent(this, BtDeviceListActivity.class);
-//            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-//            return true;
-//        case R.id.insecure_connect_scan:
-//            // Launch the DeviceListActivity to see devices and do scan
-//            serverIntent = new Intent(this, BtDeviceListActivity.class);
-//            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
-//            return true;
-//        case R.id.discoverable:
-//            // Ensure this device is discoverable by others
-//            ensureDiscoverable();
-//            return true;
-//        }
-        return false;
-    }
 	
 	/**
      * Set the current state of the chat connection

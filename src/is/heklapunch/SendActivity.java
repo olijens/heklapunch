@@ -23,12 +23,14 @@ public class SendActivity extends BlueToothActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_send);
 
 		ensureDiscoverable();
 		Intent serverIntent = new Intent(this, BtDeviceListActivity.class);
-		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-
+//		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+		
+		setContentView(R.layout.activity_send);
+		
 		// Senda lista
 		SQLHandler handler = new SQLHandler(this);
 		ArrayList<ArrayList<String>> results = handler.getAllStations();
@@ -56,28 +58,37 @@ public class SendActivity extends BlueToothActivity {
 		} else {
 			tv.setText("SUCCESS");
 		}
-
+		
 		stop();
+		
 	}
-
+	
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (DEBUG)
-			Log.d(TAG, "onActivityResult " + resultCode);
-		switch (requestCode) {
-		case REQUEST_CONNECT_DEVICE_SECURE:
-			// When DeviceListActivity returns with a device to connect
-			if (resultCode == Activity.RESULT_OK) {
-				connectDevice(data, true);
-			}
-			break;
-		case REQUEST_CONNECT_DEVICE_INSECURE:
-			// When DeviceListActivity returns with a device to connect
-			if (resultCode == Activity.RESULT_OK) {
-				connectDevice(data, false);
-			}
-			break;
-		}
-	}
+        if(DEBUG) Log.d(TAG, "onActivityResult " + resultCode);
+        switch (requestCode) {
+        case REQUEST_CONNECT_DEVICE_SECURE:
+            // When DeviceListActivity returns with a device to connect
+            if (resultCode == Activity.RESULT_OK) {
+                connectDevice(data, true);
+            }
+            break;
+        case REQUEST_CONNECT_DEVICE_INSECURE:
+            // When DeviceListActivity returns with a device to connect
+            if (resultCode == Activity.RESULT_OK) {
+                connectDevice(data, false);
+            }
+            break;
+        case REQUEST_ENABLE_BT:
+            // When the request to enable Bluetooth returns
+            if (resultCode == Activity.RESULT_OK) {
+            	if(DEBUG) Log.d(TAG, "Bluetooth enabled");
+            } else {
+                Log.d(TAG, "BT not enabled");
+                Toast.makeText(this, "User did not enable Bluetooth or an error occured", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
