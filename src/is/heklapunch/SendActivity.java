@@ -28,9 +28,10 @@ public class SendActivity extends BlueToothActivity {
 		Intent serverIntent = new Intent(this, BtDeviceListActivity.class);
 //		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
 		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
-		
 		setContentView(R.layout.activity_send);
-		
+	}
+	
+	public void send() {
 		// Senda lista
 		SQLHandler handler = new SQLHandler(this);
 		ArrayList<ArrayList<String>> results = handler.getAllStations();
@@ -60,7 +61,6 @@ public class SendActivity extends BlueToothActivity {
 		}
 		
 		stop();
-		
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -70,12 +70,14 @@ public class SendActivity extends BlueToothActivity {
             // When DeviceListActivity returns with a device to connect
             if (resultCode == Activity.RESULT_OK) {
                 connectDevice(data, true);
+                send();
             }
             break;
         case REQUEST_CONNECT_DEVICE_INSECURE:
             // When DeviceListActivity returns with a device to connect
             if (resultCode == Activity.RESULT_OK) {
                 connectDevice(data, false);
+                send();
             }
             break;
         case REQUEST_ENABLE_BT:

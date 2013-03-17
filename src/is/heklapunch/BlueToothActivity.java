@@ -68,6 +68,8 @@ public class BlueToothActivity extends Activity {
     private StringBuffer mOutStringBuffer;
     // Local Bluetooth adapter
     private BluetoothAdapter mBluetoothAdapter = null;
+    
+    Activity mHandler = null;
 	
 
     @Override
@@ -85,6 +87,8 @@ public class BlueToothActivity extends Activity {
             finish();
             return;
         }
+        
+        mHandler = this;
     }
     
     @Override
@@ -275,6 +279,7 @@ public class BlueToothActivity extends Activity {
 //        bundle.putString(DEVICE_NAME, device.getName());
 //        msg.setData(bundle);
 //        mHandler.sendMessage(msg);
+        if(DEBUG) Log.d(TAG, "Connected to " + device.getName());
 
         setState(STATE_CONNECTED);
     }
@@ -553,6 +558,7 @@ public class BlueToothActivity extends Activity {
                     bytes = mmInStream.read(buffer);
 
                     // Send the obtained bytes to the UI Activity
+                    Toast.makeText(mHandler, bytes, Toast.LENGTH_LONG).show();
 //                    mHandler.obtainMessage(BluetoothChat.MESSAGE_READ, bytes, -1, buffer)
 //                            .sendToTarget();
                 } catch (IOException e) {
