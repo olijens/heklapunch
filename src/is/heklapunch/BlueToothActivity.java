@@ -30,7 +30,7 @@ public class BlueToothActivity extends Activity {
     protected static final int REQUEST_ENABLE_BT = 3;
     
     // How long discoverable
-    protected static final int DISCOVERABLE_SECONDS = 60;
+    protected static final int DISCOVERABLE_SECONDS = 300;
     
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -58,6 +58,7 @@ public class BlueToothActivity extends Activity {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
+    private String last_error = "";
     
     // Name of the connected device
     private String mConnectedDeviceName = null;
@@ -137,6 +138,10 @@ public class BlueToothActivity extends Activity {
         // Stop the Bluetooth chat services
 //        if (mChatService != null) mChatService.stop();
         if(DEBUG) Log.e(TAG, "--- ON DESTROY ---");
+    }
+    
+    protected String getLastError() {
+    	return last_error;
     }
     
     protected void ensureDiscoverable() {
