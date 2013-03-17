@@ -106,7 +106,7 @@ public class KeppaActivity extends Activity {
 			t3.setText(entry.get(3).toString());
 
 			t1.setTypeface(null, 1);
-			t1.setWidth(110);
+			t1.setWidth(130);
 			t2.setTypeface(null, 1);
 			t2.setWidth(146);
 			t3.setTypeface(null, 1);
@@ -220,7 +220,7 @@ public class KeppaActivity extends Activity {
 				isTimeChecked = false;
 			}
 			//write to db			
-			handler.addStation("Stöð " + Integer.toString(handler.count()+1),time,scanResult.getContents(), isTimeChecked, this.getGPS());
+			handler.addStation("Stöð " + Integer.toString(handler.count()+30),time,scanResult.getContents(), isTimeChecked, this.getGPS());
 			//redraw view
 			TableLayout vg = (TableLayout) findViewById (R.id.station_table);
 			vg.removeAllViews();
