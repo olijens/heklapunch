@@ -29,6 +29,9 @@ public class BlueToothActivity extends Activity {
     protected static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     protected static final int REQUEST_ENABLE_BT = 3;
     
+    // How long discoverable
+    protected static final int DISCOVERABLE_SECONDS = 60;
+    
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
     public static final int STATE_LISTEN = 1;     // now listening for incoming connections
@@ -144,7 +147,7 @@ public class BlueToothActivity extends Activity {
         	if(DEBUG) Log.d(TAG, " ENSURING... ");
         	
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 10);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERABLE_SECONDS);
             startActivity(discoverableIntent);
         }
     }
