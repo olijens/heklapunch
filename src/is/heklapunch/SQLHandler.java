@@ -76,8 +76,6 @@ public class SQLHandler extends SQLiteOpenHelper {
 	// To update use updateSettingbyName(name, value)
 
 	// Since a course without a station is nonexistant, we only add in stations
-	// TODO: add handling for start/end stations, fix station numbering
-	// ***************untested
 	public void addStation(String courseName, int courseID, String stationName,
 			int stationNumber, String QRValue, String GPSValue)
 			throws SQLException {
@@ -103,7 +101,6 @@ public class SQLHandler extends SQLiteOpenHelper {
 
 	// Get single courses' stations' values, which is an arraylist of arraylists
 	// strings
-	// **********untested**********
 	public ArrayList<ArrayList<String>> getCoursebyID(int courseID)
 			throws SQLException {
 
@@ -151,7 +148,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 
 	// update station with id stationID, currentStationNumber with
 	// newstationnumber and QRvalue
-	// TODO: make this work correctly.
+	// TODO: this should be depricated soon
 	public int updateStation(int stationID, String newCourseName,
 			int newStationNumber, String newQRvalue, String newGPSValue) {
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -197,6 +194,15 @@ public class SQLHandler extends SQLiteOpenHelper {
 		db.close();
 		return cCount;
 	}
+	
+	// removes course with course ID targetID
+	public void removeCourseByID(int targetID) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(ORGANIZE_TABLE_NAME, ORGANIZE_COURSE_ID + " = ? ",
+				new String[] { String.valueOf(targetID) });
+		db.close();
+	}
+	
 
 	/*
 	 * 
