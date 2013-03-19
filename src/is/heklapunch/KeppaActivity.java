@@ -103,7 +103,7 @@ public class KeppaActivity extends Activity {
 			t2 = new TextView(this);
 			t3 = new TextView(this);
 
-			t1.setText(entry.get(0).toString());
+			t1.setText(entry.get(2).toString());
 			
 			//fix date
 			String longV = entry.get(1).toString();
@@ -114,7 +114,7 @@ public class KeppaActivity extends Activity {
 			t3.setText(entry.get(3).toString());
 
 			t1.setTypeface(null, 1);
-			t1.setWidth(130);
+			//t1.setWidth(130);
 			t2.setTypeface(null, 1);
 			t2.setWidth(146);
 			t3.setTypeface(null, 1);
