@@ -9,6 +9,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.SimpleCursorAdapter;
 
 //TODO: IMPORTANT! the station numbering scheme is not safe! it needs to have an appropriate indexing system, or a update its counts on delete/update! fix asap.
 
@@ -183,18 +185,29 @@ public class SQLHandler extends SQLiteOpenHelper {
 		db.close();
 		return icount;
 	}
+	
+	// Gets the number of courses already in the table
+	public int courseCount() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		String count = "SELECT DISTINCT " + ORGANIZE_COURSE_ID + " FROM " + ORGANIZE_TABLE_NAME;
+		Cursor c = db.rawQuery(count, null);
+		int icount = c.getCount();
+		db.close();
+		return icount;
+	}
 
 	// returns highest course ID number
 	public int getMaxCourseID() {
 		SQLiteDatabase db = this.getWritableDatabase();
-		String count = "SELECT MAX (" + ORGANIZE_COURSE_ID + ") FROM "
+		String query = "SELECT MAX (" + ORGANIZE_COURSE_ID + ") FROM "
 				+ ORGANIZE_TABLE_NAME;
-		Cursor mcursor = db.rawQuery(count, null);
-		int cCount = mcursor.getCount();
+		Cursor mcursor = db.rawQuery(query, null);
+		mcursor.moveToFirst();
+		int cCount = (int)mcursor.getInt(0);
 		db.close();
 		return cCount;
 	}
-	
+
 	// removes course with course ID targetID
 	public void removeCourseByID(int targetID) {
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -202,7 +215,46 @@ public class SQLHandler extends SQLiteOpenHelper {
 				new String[] { String.valueOf(targetID) });
 		db.close();
 	}
+
+	// returns true iff the database contains a course with courseID target
+	public boolean checkCoursebyID(int target) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor c = db.rawQuery("SELECT 1 FROM " + ORGANIZE_TABLE_NAME + " WHERE _id=", new String[] { String.valueOf(target) });
+		if (c.getCount() == 0) {
+			return false;
+		} 
+		else {
+			return true;
+		}
+	}
 	
+	// returns array containing the course names and corrisponding courseIDs
+	public CourseData[] getCourseIDs(){
+        String query = "SELECT " +ORGANIZE_COURSE_ID + ", " + ORGANIZE_COURSE_NAME + " FROM " + ORGANIZE_TABLE_NAME + " GROUP BY " + ORGANIZE_COURSE_ID ;
+        SQLiteDatabase db = this.getReadableDatabase();
+        
+		CourseData[] data = null;        
+        try {
+        	Cursor cursor = db.rawQuery(query, null);
+        	int q = cursor.getCount();
+        	data = new CourseData[q];
+			if (cursor.moveToFirst()) {
+				int i = 0;
+				do {
+					data[i] = new CourseData(cursor.getString(1), cursor.getString(0));
+					i++;
+				} while (cursor.moveToNext());
+
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
+				}
+			}
+			db.close();
+		} catch (Exception e) {
+
+		}
+        return data;
+	}
 
 	/*
 	 * 

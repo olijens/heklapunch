@@ -37,21 +37,36 @@ public class OrganizeModifyActivity extends Activity {
 	SQLHandler handler;
 	EditText stationNameField;
 	EditText courseNameField;
-	String stationName = "";
+	String stationName = ".";
 	ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
 	int stationNumber = 1;
+	int courseID = -1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_organize_create);
+		setContentView(R.layout.activity_organize_modify);
 		// create database object
 		handler = new SQLHandler(this);
 		courseNameField = (EditText) findViewById(R.id.editTextCourseName);
 		stationNameField = (EditText) findViewById(R.id.EditTextStationName);
 
+		// get the course ID from sent to us form the create screen
+		Bundle b = getIntent().getExtras();
+		if (b.containsKey("courseID")) {
+			courseID = b.getInt("courseID");
+		}
+		
+		if(courseID != -1 && handler.checkCoursebyID(courseID)){
+			stationList = handler.getCoursebyID(courseID);
+		}
+		else{
+			courseID = handler.getMaxCourseID() + 1;
+		}
+		
 		// make table
 		station_table = (TableLayout) findViewById(R.id.Create_Station_Table);
+		System.out.print("lol");
 		this.fillTable();
 	}
 
@@ -65,8 +80,10 @@ public class OrganizeModifyActivity extends Activity {
 		// Converting to dip unit
 		int dip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
 				(float) 1, getResources().getDisplayMetrics());
-
-		stationName = stationNameField.getText().toString();
+		
+		/*if(stationNameField.getText() != null){
+			stationName = stationNameField.getText().toString();
+		}*/
 
 		Iterator<ArrayList<String>> i = stationList.iterator();
 
@@ -98,19 +115,20 @@ public class OrganizeModifyActivity extends Activity {
 
 		}
 	}
-	
-	//Save list contents to database
-	public void saveList(View view){
+
+	// Save list contents to database
+	public void saveList(View view) {
 		String courseTitle = courseNameField.getText().toString();
-		int courseID = handler.getMaxCourseID() + 1;
 		Iterator<ArrayList<String>> i = stationList.iterator();
+		handler.removeCourseByID(courseID);
 		while (i.hasNext()) {
 			ArrayList<?> entry = i.next();
 			int stationNumber = Integer.valueOf(entry.get(0).toString());
 			String stationTitle = entry.get(1).toString();
 			String QRValue = entry.get(2).toString();
 			String GPSValue = entry.get(3).toString();
-			handler.addStation(courseTitle, courseID, stationTitle, stationNumber, QRValue, GPSValue);
+			handler.addStation(courseTitle, courseID, stationTitle,
+					stationNumber, QRValue, GPSValue);
 		}
 	}
 
@@ -124,38 +142,38 @@ public class OrganizeModifyActivity extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		ArrayList<String> tempStation = new ArrayList<String>();
 
-		IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);		
+		IntentResult scanResult = IntentIntegrator.parseActivityResult(
+				requestCode, resultCode, intent);
 		if (scanResult != null && scanResult.getContents().length() != 0) {
 			// handle scan result
-			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT).show();
-			//write to db			
+			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT)
+					.show();
+			// write to db
 			if (stationNameField.getText().toString() != null) {
-				//add station number
+				// add station number
 				tempStation.add(String.valueOf(stationNumber));
-				//add station name
+				// add station name
 				tempStation.add(stationNameField.getText().toString());
-				//add QR code
+				// add QR code
 				tempStation.add(String.valueOf(scanResult.getContents()));
-				//add GPS
-				//TODO: add working gps!
+				// add GPS
+				// TODO: add working gps!
 				tempStation.add("12345");
 				stationNumber++;
-			}
-			else{
+			} else {
 				tempStation.add(String.valueOf(stationNumber));
 				tempStation.add("Stöð nr. " + stationNumber);
 				tempStation.add(String.valueOf(scanResult.getContents()));
-				//unused field for GPS
+				// unused field for GPS
 				tempStation.add("");
 				stationNumber++;
 			}
 			stationList.add(tempStation);
-			TableLayout vg = (TableLayout) findViewById (R.id.Create_Station_Table);
+			TableLayout vg = (TableLayout) findViewById(R.id.Create_Station_Table);
 			vg.removeAllViews();
-			//redraw table
-			this.fillTable();			
-		} 
-		else {
+			// redraw table
+			this.fillTable();
+		} else {
 			Toast.makeText(this, "No scan", Toast.LENGTH_SHORT).show();
 		}
 	}

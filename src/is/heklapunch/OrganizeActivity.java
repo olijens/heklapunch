@@ -20,12 +20,6 @@ public class OrganizeActivity extends Activity {
         startActivity(m);
     }
     
-	//Go to modify mode
-    public void modify(View view) {
-    	Intent c = new Intent(this, OrganizeModifyActivity.class);
-        startActivity(c);
-    }
-    
 	//Go to recieve mode
     public void receive(View view) {
     	Intent r = new Intent(this, OrganizeReceiveActivity.class);

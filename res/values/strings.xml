@@ -10,10 +10,10 @@
     <string name="organize_efst">Umsjón</string>
     <string name="organize_new_track_button">Gera nýja braut</string>
     <string name="organize_receive_data_button">Taka á móti gögnum</string>
-    <string name="organize_modify_data_button">Vinna með gögn</string>
+    <string name="organize_modify_data_button">Uppsettning brauta</string>
     <string name="organize_new_track_title">Gera nýja braut</string>
     <string name="organize_receive_data_title">Taka á móti gögnum</string>
-    <string name="organize_modify_data_title">Vinna með gögn</string>
+    <string name="organize_modify_data_title">Uppsettning brauta</string>
     <string name="organize_create_qr_read">Lesa inn QR kóða</string>
     <string name="organize_create_default_name">Nafn brautar</string>
     <string name="organize_create_station_default_name">Nafn stöðvar (optional)</string>

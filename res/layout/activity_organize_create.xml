@@ -11,57 +11,34 @@
         android:text="@string/organize_efst"
         android:textSize="24sp" />
 
-    <EditText
-        android:id="@+id/editTextCourseName"
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/organize_create_default_name" />
-
-    <EditText
-        android:id="@+id/EditTextStationName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/organize_create_station_default_name" />
+        android:layout_height="50dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:onClick="createCourse"
+        android:text="@string/organize_new_track_button" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="50dip"
         android:layout_marginLeft="20dip"
         android:layout_marginRight="20dip"
-        android:onClick="read_qr"
-        android:text="@string/organize_create_qr_read" />
+        android:onClick="modifyCourse"
+        android:text="@string/organize_modify_data_button" />
 
-<!--    <Button
+    <!--
+        <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="testInsert"
-        android:text="Testinsert" /> -->
+        android:text="Testinsert" />
+    -->
 
-    <ScrollView
-        android:id="@+id/Create_Scroll_View"
+    <Spinner
+        android:id="@+id/spinner1"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="0.46"
-        android:fillViewport="true" >
-
-        <TableLayout
-            android:id="@+id/Create_Station_Table"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-        </TableLayout>
-    </ScrollView>
-
-    <Button
-        android:id="@+id/Create_Save"
-        android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip"
-        android:layout_weight="0.00"
-        android:onClick="saveList"
-        android:text="@string/save" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
