@@ -219,7 +219,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 	// returns true iff the database contains a course with courseID target
 	public boolean checkCoursebyID(int target) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor c = db.rawQuery("SELECT 1 FROM " + ORGANIZE_TABLE_NAME + " WHERE _id=", new String[] { String.valueOf(target) });
+		Cursor c = db.rawQuery("SELECT * FROM " + ORGANIZE_TABLE_NAME + " WHERE " + ORGANIZE_COURSE_ID + "= " + String.valueOf(target), null);
 		if (c.getCount() == 0) {
 			return false;
 		} 

@@ -1,31 +1,24 @@
 package is.heklapunch;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.IBinder;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -37,28 +30,52 @@ public class OrganizeModifyActivity extends Activity {
 	SQLHandler handler;
 	EditText stationNameField;
 	EditText courseNameField;
-	String stationName = ".";
+	String stationName = "";
 	ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
 	int stationNumber = 1;
 	int courseID = -1;
+	
+	@Override
+	public void onBackPressed() {
+	    new AlertDialog.Builder(this)
+	        .setIcon(android.R.drawable.ic_dialog_alert)
+	        .setTitle("Closing Activity")
+	        .setMessage("Are you sure you want to close this activity?")
+	        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+	    {
+	        
+	        public void onClick(DialogInterface dialog, int which) {
+	            finish();    
+	        }
+
+	    })
+	    .setNegativeButton("No", null)
+	    .show();
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_organize_modify);
+		
 		// create database object
 		handler = new SQLHandler(this);
 		courseNameField = (EditText) findViewById(R.id.editTextCourseName);
 		stationNameField = (EditText) findViewById(R.id.EditTextStationName);
+		
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		courseNameField.setImeOptions(EditorInfo.IME_ACTION_DONE);
+		stationNameField.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
 		// get the course ID from sent to us form the create screen
 		Bundle b = getIntent().getExtras();
 		if (b.containsKey("courseID")) {
 			courseID = b.getInt("courseID");
 		}
-		
 		if(courseID != -1 && handler.checkCoursebyID(courseID)){
 			stationList = handler.getCoursebyID(courseID);
+			stationName = handler.getCourseIDs()[stationNumber].getSpinnerText();
+			courseNameField.setText(stationName);
 		}
 		else{
 			courseID = handler.getMaxCourseID() + 1;

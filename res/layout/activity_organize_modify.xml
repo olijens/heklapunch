@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:maxLength="30"
         android:hint="@string/organize_create_default_name" />
 
     <EditText
@@ -23,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:maxLength="30"
         android:hint="@string/organize_create_station_default_name" />
 
     <Button
