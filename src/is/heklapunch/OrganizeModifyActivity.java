@@ -74,7 +74,13 @@ public class OrganizeModifyActivity extends Activity {
 		}
 		if(courseID != -1 && handler.checkCoursebyID(courseID)){
 			stationList = handler.getCoursebyID(courseID);
-			stationName = handler.getCourseIDs()[stationNumber].getSpinnerText();
+			CourseData[] courseIDs = handler.getCourseIDs();
+			for(int i =0; i < courseIDs.length; i++){
+				if(Integer.valueOf(courseIDs[i].getValue()) == courseID){
+					stationName = handler.getCourseIDs()[i].getSpinnerText();
+					break;
+				}
+			}
 			courseNameField.setText(stationName);
 		}
 		else{
