@@ -9,13 +9,14 @@ import com.google.gson.GsonBuilder;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SendActivity extends BlueToothActivity {
+public class SendActivity extends BlueToothClient {
 
 	private static final boolean DEBUG = true;
 	private static final String TAG = "SendActivity";
@@ -24,13 +25,16 @@ public class SendActivity extends BlueToothActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		ensureDiscoverable();
 		Intent serverIntent = new Intent(this, BtDeviceListActivity.class);
-//		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
-		setContentView(R.layout.activity_send);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+			startActivityForResult(serverIntent,
+					REQUEST_CONNECT_DEVICE_INSECURE);
+		} else {
+			startActivityForResult(serverIntent,
+					REQUEST_CONNECT_DEVICE_SECURE);
+		}
 	}
-	
+
 	public void send() {
 		// Senda lista
 		SQLHandler handler = new SQLHandler(this);
@@ -43,9 +47,9 @@ public class SendActivity extends BlueToothActivity {
 			payload.put(entry.get(0).toString(), entry.get(1).toString());
 		}
 
-		String json = new GsonBuilder().create()
-				.toJson(payload, Map.class);
-		if (DEBUG) Toast.makeText(this, json, Toast.LENGTH_LONG).show();
+		String json = new GsonBuilder().create().toJson(payload, Map.class);
+		if (DEBUG)
+			Toast.makeText(this, json, Toast.LENGTH_LONG).show();
 		if (json.length() > 0) {
 			// Get the message bytes and tell the BluetoothChatService to write
 			byte[] send = json.getBytes();
@@ -59,38 +63,41 @@ public class SendActivity extends BlueToothActivity {
 		} else {
 			tv.setText("SUCCESS");
 		}
-		
-		stop();
 	}
-	
+
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(DEBUG) Log.d(TAG, "onActivityResult " + resultCode);
-        switch (requestCode) {
-        case REQUEST_CONNECT_DEVICE_SECURE:
-            // When DeviceListActivity returns with a device to connect
-            if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data, true);
-                send();
-            }
-            break;
-        case REQUEST_CONNECT_DEVICE_INSECURE:
-            // When DeviceListActivity returns with a device to connect
-            if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data, false);
-                send();
-            }
-            break;
-        case REQUEST_ENABLE_BT:
-            // When the request to enable Bluetooth returns
-            if (resultCode == Activity.RESULT_OK) {
-            	if(DEBUG) Log.d(TAG, "Bluetooth enabled");
-            } else {
-                Log.d(TAG, "BT not enabled");
-                Toast.makeText(this, "User did not enable Bluetooth or an error occured", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }
-    }
+		if (DEBUG)
+			Log.d(TAG, "onActivityResult " + resultCode);
+		switch (requestCode) {
+			case REQUEST_CONNECT_DEVICE_SECURE:
+				// When DeviceListActivity returns with a device to connect
+				if (resultCode == Activity.RESULT_OK) {
+					connectDevice(data, true);
+					send();
+				}
+				break;
+			case REQUEST_CONNECT_DEVICE_INSECURE:
+				// When DeviceListActivity returns with a device to connect
+				if (resultCode == Activity.RESULT_OK) {
+					connectDevice(data, false);
+					send();
+				}
+				break;
+			case REQUEST_ENABLE_BT:
+				// When the request to enable Bluetooth returns
+				if (resultCode == Activity.RESULT_OK) {
+					if (DEBUG)
+						Log.d(TAG, "Bluetooth enabled");
+				} else {
+					Log.d(TAG, "BT not enabled");
+					Toast.makeText(this,
+							"User did not enable Bluetooth or an error occured",
+							Toast.LENGTH_SHORT).show();
+					finish();
+				}
+				break;
+ 		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
