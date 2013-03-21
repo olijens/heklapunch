@@ -48,6 +48,7 @@ public abstract class BlueToothBase {
 	public static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
 	public static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     public static final int REQUEST_ENABLE_BT = 3;
+    public static final int REQUEST_MAKE_DISCOVERABLE = 4;
 	
 	// Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -94,6 +95,11 @@ public abstract class BlueToothBase {
     	}
     	Log.d(TAG, "MESSAGE_TOAST: " + msg.getData().getString(BlueToothMessageHandler.TOAST));
     }
+    
+    /* */
+    public void setDiscoverableTimeout(int Secs) {
+    	_discSec = Secs > 0 ? Secs : 0;
+    }
 	
 	/* */
 	public boolean start() {
@@ -108,21 +114,27 @@ public abstract class BlueToothBase {
 		
 		mHandler = new BlueToothMessageHandler(this);
 		
+		if (DEBUG) Log.d(TAG, "+ START +");
+		
 		// OK 
 		return true;
 	}
 	
-	protected void ensureDiscoverable() {
-		// Ensure device is discoverable
-		if (mBluetoothAdapter.getScanMode() !=
-	        BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-			
-			int discSec = _discSec <= 0 ? DEFAULT_DISCOVERABLE_SECONDS : _discSec;
-			
-	        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-	        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, discSec);
-	        _caller.startActivity(discoverableIntent);
-	    }
+	/* */
+	public boolean isDiscoverable() {
+		return (mBluetoothAdapter.getScanMode() ==
+		        BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE);
+	}
+	
+	/* */
+	public void ensureDiscoverable() {
+		int discSec = _discSec <= 0 ? DEFAULT_DISCOVERABLE_SECONDS : _discSec;
+		
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, discSec);
+        _caller.startActivityForResult(discoverableIntent, REQUEST_MAKE_DISCOVERABLE);
+		
+		if (DEBUG) Log.d(TAG, "+ ensureDiscoverable +");
 	}
 	
 	/* */
@@ -132,6 +144,8 @@ public abstract class BlueToothBase {
 		    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 		    _caller.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		}
+		
+		if (DEBUG) Log.d(TAG, "+ ENABLE +");
 	}
 	
 	/**/

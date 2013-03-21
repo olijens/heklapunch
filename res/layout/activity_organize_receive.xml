@@ -9,5 +9,12 @@
         android:layout_height="45dip"
         android:gravity="center"
         android:text="@string/organize_receive_data_title" android:textSize="24sp"/>
+    
+     <ListView android:id="@+id/in"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
+        android:layout_weight="1"/>
 
 </LinearLayout>

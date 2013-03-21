@@ -1,71 +1,87 @@
 package is.heklapunch;
 
+import is.heklapunch.bluetooth.BlueToothServer;
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
+import android.view.Window;
+import android.widget.ListView;
 
-public class OrganizeReceiveActivity extends BlueToothServer {
+public class OrganizeReceiveActivity extends Activity {
 
-	private static final boolean DEBUG = true;
-	private static final String TAG = "OrganizeReceiveActivity";
+//	private static final boolean DEBUG = true;
+//	private static final String TAG = "BTServerActivity";
+	private BlueToothServer mServer;
+	private ListView mPayloadsView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (DEBUG)
-			Log.d(TAG, "+ START +");
-
-		if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-
-			Intent discoverableIntent = new Intent(
-					BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-			discoverableIntent.putExtra(
-					BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,
-					DISCOVERABLE_SECONDS);
-			startActivity(discoverableIntent);
-		} else {
-			if (DEBUG)
-				Log.d(TAG, "Device ID already in discovery mode");
+		
+		//
+		if (mServer == null) {
+			mServer = new BlueToothServer(this, null);
+			mServer.listen();
 		}
 		
+		if(!mServer.isDiscoverable()) {
+			mServer.ensureDiscoverable();
+		} 
+
+		// Setup the window
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_organize_receive);
 
-		if (DEBUG)
-			Log.d(TAG, "- AFTER -");
+		// Set result CANCELED incase the user backs out
+		setResult(Activity.RESULT_CANCELED);
+
+		// Indicate scanning in the title
+		setProgressBarIndeterminateVisibility(true);
+		setTitle(R.string.scanning);
+		
+		// Initialize the array adapter for the conversation thread
+		mPayloadsView = (ListView) findViewById(R.id.in);
+		mPayloadsView.setAdapter(mServer.mPayloadsRecieved);
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (DEBUG)
-			Log.d(TAG, "onActivityResult " + resultCode);
-		switch (requestCode) {
-		case REQUEST_CONNECT_DEVICE_SECURE:
-			// When DeviceListActivity returns with a device to connect
-			if (resultCode == Activity.RESULT_OK) {
-				connectDevice(data, true);
-			}
-			break;
-		case REQUEST_CONNECT_DEVICE_INSECURE:
-			// When DeviceListActivity returns with a device to connect
-			if (resultCode == Activity.RESULT_OK) {
-				connectDevice(data, false);
-			}
-			break;
-		case REQUEST_ENABLE_BT:
-			// When the request to enable Bluetooth returns
-			if (resultCode == Activity.RESULT_OK) {
-				if (DEBUG)
-					Log.d(TAG, "Bluetooth enabled");
-			} else {
-				Log.d(TAG, "BT not enabled");
-				Toast.makeText(this,
-						"User did not enable Bluetooth or an error occured",
-						Toast.LENGTH_SHORT).show();
-				finish();
-			}
+	@Override
+	public void onStart() {
+		super.onStart();
+		if (mServer == null) {
+			mServer = new BlueToothServer(this, null);
+			mServer.listen();
+		}
+	}
+
+	@Override
+	public synchronized void onResume() {
+		super.onResume();
+
+		// Performing this check in onResume() covers the case in which BT was
+		// not enabled during onStart(), so we were paused to enable it...
+		// onResume() will be called when ACTION_REQUEST_ENABLE activity
+		// returns.
+		if (mServer == null) {
+			mServer = new BlueToothServer(this, null);
+			mServer.listen();
+		}
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		if (mServer != null) {
+			mServer.stop();
+			mServer = null;
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		// Stop the Bluetooth services
+		if (mServer != null) {
+			mServer.stop();
+			mServer = null;
 		}
 	}
 }

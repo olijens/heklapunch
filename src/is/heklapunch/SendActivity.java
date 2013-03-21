@@ -1,41 +1,55 @@
 package is.heklapunch;
 
+import is.heklapunch.bluetooth.BlueToothClient;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.google.gson.GsonBuilder;
-
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.TextView;
 import android.widget.Toast;
 
-public class SendActivity extends BlueToothClient {
+import com.google.gson.GsonBuilder;
+
+public class SendActivity extends Activity {
 
 	private static final boolean DEBUG = true;
 	private static final String TAG = "SendActivity";
+	private BlueToothClient mClient;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		Intent serverIntent = new Intent(this, BtDeviceListActivity.class);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-			startActivityForResult(serverIntent,
-					REQUEST_CONNECT_DEVICE_INSECURE);
+		
+		mClient = new BlueToothClient(this);
+		mClient.setDiscoverableTimeout(10);
+		mClient.start();
+		
+		if(!mClient.isDiscoverable()) {
+			mClient.ensureDiscoverable();
 		} else {
-			startActivityForResult(serverIntent,
-					REQUEST_CONNECT_DEVICE_SECURE);
+			startBTpairingIntent();
 		}
 	}
 
-	public void send() {
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.activity_send, menu);
+		return true;
+	}
+
+	/*
+	 * Smíðar JSON gagnastreng til að senda á umsjónarmann
+	 * */
+	private String get_payload() {
 		// Senda lista
 		SQLHandler handler = new SQLHandler(this);
 		ArrayList<ArrayList<String>> results = handler.getAllStations();
@@ -46,22 +60,34 @@ public class SendActivity extends BlueToothClient {
 			ArrayList<?> entry = i.next();
 			payload.put(entry.get(0).toString(), entry.get(1).toString());
 		}
+		
+		SharedPreferences prefs = getPreferences(0);
+        String restoredText = prefs.getString("text", null);
+        if(restoredText == null) restoredText = "NO USERNAME";
+        payload.put("username", restoredText);
 
 		String json = new GsonBuilder().create().toJson(payload, Map.class);
+		
 		if (DEBUG)
 			Toast.makeText(this, json, Toast.LENGTH_LONG).show();
-		if (json.length() > 0) {
-			// Get the message bytes and tell the BluetoothChatService to write
-			byte[] send = json.getBytes();
-			write(send);
-		}
-
-		TextView tv = (TextView) findViewById(R.id.sendresult);
-		String err = getLastError();
-		if (err != "") {
-			tv.setText(err);
+		
+		return json;
+	}
+	
+	/* */
+	private void startBTpairingIntent() {
+		// Störtum valmynd bluetooth tækja
+		Intent serverIntent = new Intent(this, BtDeviceListActivity.class);
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+			// Gamlir símar styðja ekki óöruggan staðal, og þurfa því 
+			// að para sig við umsjónarmann.
+			startActivityForResult(serverIntent,
+					BlueToothClient.REQUEST_CONNECT_DEVICE_INSECURE);
 		} else {
-			tv.setText("SUCCESS");
+			// Óöruggur staðal, þarfnast ekki pörunar
+			startActivityForResult(serverIntent,
+					BlueToothClient.REQUEST_CONNECT_DEVICE_SECURE);
 		}
 	}
 
@@ -69,41 +95,66 @@ public class SendActivity extends BlueToothClient {
 		if (DEBUG)
 			Log.d(TAG, "onActivityResult " + resultCode);
 		switch (requestCode) {
-			case REQUEST_CONNECT_DEVICE_SECURE:
-				// When DeviceListActivity returns with a device to connect
-				if (resultCode == Activity.RESULT_OK) {
-					connectDevice(data, true);
-					send();
+		case BlueToothClient.REQUEST_MAKE_DISCOVERABLE:
+			startBTpairingIntent();
+			break;
+		case BlueToothClient.REQUEST_CONNECT_DEVICE_SECURE:
+			if (DEBUG)
+				Log.d(TAG, "REQUEST_CONNECT_DEVICE_SECURE");
+			if (resultCode == Activity.RESULT_OK) {
+				mClient.connectToDevice(data, true);
+				String json = get_payload();
+				if (json.length() > 0) {
+					mClient.send(json);
 				}
-				break;
-			case REQUEST_CONNECT_DEVICE_INSECURE:
-				// When DeviceListActivity returns with a device to connect
-				if (resultCode == Activity.RESULT_OK) {
-					connectDevice(data, false);
-					send();
+			}
+			break;
+		case BlueToothClient.REQUEST_CONNECT_DEVICE_INSECURE:
+			if (DEBUG)
+				Log.d(TAG, "REQUEST_CONNECT_DEVICE_INSECURE");
+			if (resultCode == Activity.RESULT_OK) {
+				mClient.connectToDevice(data, false);
+				String json = get_payload();
+				if (json.length() > 0) {
+					mClient.send(get_payload());
 				}
-				break;
-			case REQUEST_ENABLE_BT:
-				// When the request to enable Bluetooth returns
-				if (resultCode == Activity.RESULT_OK) {
-					if (DEBUG)
-						Log.d(TAG, "Bluetooth enabled");
-				} else {
-					Log.d(TAG, "BT not enabled");
-					Toast.makeText(this,
-							"User did not enable Bluetooth or an error occured",
-							Toast.LENGTH_SHORT).show();
-					finish();
-				}
-				break;
- 		}
+			}
+			break;
+		case BlueToothClient.REQUEST_ENABLE_BT:
+			if (resultCode == Activity.RESULT_OK) {
+				if (DEBUG)
+					Log.d(TAG, "Bluetooth enabled");
+			} else {
+				Log.d(TAG, "BT not enabled");
+				Toast.makeText(this,
+						"User did not enable Bluetooth or an error occured",
+						Toast.LENGTH_SHORT).show();
+				finish();
+			}
+			break;
+		}
 	}
-
+	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_send, menu);
-		return true;
-	}
+    public void onStart() {
+        super.onStart();
+        if(DEBUG) Log.e(TAG, "-- ON START --");
+    }
+	
+	@Override
+    public void onStop() {
+        super.onStop();
+        if(DEBUG) Log.e(TAG, "-- ON STOP --");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Stop the Bluetooth services
+        if(mClient != null) {
+        	mClient.stop();
+        }
+        if(DEBUG) Log.e(TAG, "--- ON DESTROY ---");
+    }
 
 }

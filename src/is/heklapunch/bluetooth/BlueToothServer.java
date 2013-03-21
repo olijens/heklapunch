@@ -13,6 +13,7 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 public class BlueToothServer extends BlueToothBase {
@@ -25,6 +26,12 @@ public class BlueToothServer extends BlueToothBase {
     
     // Current connection state
 	private boolean _listening = false; 
+	public ArrayAdapter<String> mPayloadsRecieved;
+	
+	public BlueToothServer(Activity caller, ArrayAdapter<String> adapter) {
+		_caller = caller;
+		mPayloadsRecieved = adapter;
+	}
 	
 	@Override
     protected void onMessageRead(Message msg) {
@@ -36,15 +43,16 @@ public class BlueToothServer extends BlueToothBase {
 			Toast.makeText(_caller.getApplicationContext(),
 					"READ: " + readMessage, Toast.LENGTH_LONG).show();
 		}
+		
+		if(mPayloadsRecieved != null)
+			mPayloadsRecieved.add(readMessage);
     }
 	
 	/* */
-	public void listen(Activity caller) {
+	public void listen() {
 		if(!_listening) {
-			_caller = caller;
 			if(start()) {
 				enable();
-				ensureDiscoverable();
 				
 				if (DEBUG) Log.d(TAG, "start");
 

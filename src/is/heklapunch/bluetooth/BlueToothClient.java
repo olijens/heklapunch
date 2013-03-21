@@ -18,6 +18,24 @@ public class BlueToothClient extends BlueToothBase {
 	public static String EXTRA_DEVICE_ADDRESS = "device_address";
 	
 	private String _payload;
+	private boolean _started = false;
+	
+	/* */
+	public BlueToothClient(Activity caller) {
+		_caller = caller;
+	}
+	
+	@Override
+	public boolean start() {
+		if(super.start()) {
+			enable();
+			_started = true;
+			return true;
+		} else {
+			if (DEBUG) Log.d(TAG, "Unable to start bluetooth");
+		}
+		return false;
+	}
 	
 	/* */
 	public Set<BluetoothDevice> getPaired() {
@@ -33,14 +51,8 @@ public class BlueToothClient extends BlueToothBase {
 	}
 	
 	/* */
-	public void connectToDevice(Activity caller, Intent data, boolean secure) {
-		_caller = caller;
-		if(start()) {
-			if (DEBUG) Log.d(TAG, "start");
-			
-			enable();
-			ensureDiscoverable();
-			
+	public void connectToDevice(Intent data, boolean secure) {
+		if(_started) {
 	    	if(DEBUG) Log.d(TAG, " connectDevice");
 	    	
 	        // Get the device MAC address
@@ -52,8 +64,6 @@ public class BlueToothClient extends BlueToothBase {
 	        
 	        // Attempt to connect to the device
 	        connect(device, secure);
-		} else {
-			if (DEBUG) Log.d(TAG, "Unable to start bluetooth");
 		}
     }
 	
