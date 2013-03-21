@@ -89,6 +89,7 @@ public class BlueToothInsecure {
 			    } catch (IOException e) {}
 			    throw new IOException("Not able to register SDP record for " + name);
 			}
+			/*
 	    	Field f_internal_handler = adapter.getClass().getDeclaredField("mHandler");
 	    	f_internal_handler.setAccessible(true);
 	    	Object internal_handler = f_internal_handler.get(adapter);
@@ -97,6 +98,7 @@ public class BlueToothInsecure {
 	    	m_set_close_handler.setAccessible(true);
 	
 	    	m_set_close_handler.invoke(socket, new Object[] { internal_handler, handle});
+	    	*/
 			return socket;
     	} catch (NoSuchMethodException e) {
     		throw new RuntimeException(e);

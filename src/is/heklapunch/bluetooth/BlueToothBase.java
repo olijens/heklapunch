@@ -69,10 +69,11 @@ public abstract class BlueToothBase {
 
 	//
 	protected Activity _caller;
-	protected BlueToothMessageHandler mHandler;
+	public BlueToothMessageHandler mHandler;
 	protected String mConnectedDeviceName;
 	public ConnectedThread mConnectedThread;
 	public ConnectThread mConnectThread;
+	protected boolean HTCWorkaround = true;
 
 	/* */
 	protected void onConnected() {
@@ -363,13 +364,14 @@ public abstract class BlueToothBase {
 		private String mSocketType;
 
 		@SuppressLint("NewApi")
-		public ConnectThread(BluetoothDevice device, boolean IsAnHTCDevice, boolean secure) {
+		public ConnectThread(BluetoothDevice device, boolean secure) {
 			mmDevice = device;
 			BluetoothSocket btsock = null;
 			mSocketType = secure ? "Secure" : "Insecure";
 
 			// Get a BluetoothSocket for a connection with the given BluetoothDevice
-            if (IsAnHTCDevice) {
+            if (HTCWorkaround) {
+            		Log.d(TAG, "Using HTCWorkaround");
 				try {
 					btsock = BlueToothInsecure.createRfcommSocketToServiceRecord(device, _uuid_insecure, true);
 				} catch (Exception e) {
