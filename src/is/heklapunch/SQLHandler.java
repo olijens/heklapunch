@@ -9,6 +9,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.SimpleCursorAdapter;
 
 //TODO: IMPORTANT! the station numbering scheme is not safe! it needs to have an appropriate indexing system, or a update its counts on delete/update! fix asap.
 
@@ -76,8 +78,6 @@ public class SQLHandler extends SQLiteOpenHelper {
 	// To update use updateSettingbyName(name, value)
 
 	// Since a course without a station is nonexistant, we only add in stations
-	// TODO: add handling for start/end stations, fix station numbering
-	// ***************untested
 	public void addStation(String courseName, int courseID, String stationName,
 			int stationNumber, String QRValue, String GPSValue)
 			throws SQLException {
@@ -103,7 +103,6 @@ public class SQLHandler extends SQLiteOpenHelper {
 
 	// Get single courses' stations' values, which is an arraylist of arraylists
 	// strings
-	// **********untested**********
 	public ArrayList<ArrayList<String>> getCoursebyID(int courseID)
 			throws SQLException {
 
@@ -151,7 +150,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 
 	// update station with id stationID, currentStationNumber with
 	// newstationnumber and QRvalue
-	// TODO: make this work correctly.
+	// TODO: this should be depricated soon
 	public int updateStation(int stationID, String newCourseName,
 			int newStationNumber, String newQRvalue, String newGPSValue) {
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -186,16 +185,75 @@ public class SQLHandler extends SQLiteOpenHelper {
 		db.close();
 		return icount;
 	}
+	
+	// Gets the number of courses already in the table
+	public int courseCount() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		String count = "SELECT DISTINCT " + ORGANIZE_COURSE_ID + " FROM " + ORGANIZE_TABLE_NAME;
+		Cursor c = db.rawQuery(count, null);
+		int icount = c.getCount();
+		db.close();
+		return icount;
+	}
 
 	// returns highest course ID number
 	public int getMaxCourseID() {
 		SQLiteDatabase db = this.getWritableDatabase();
-		String count = "SELECT MAX (" + ORGANIZE_COURSE_ID + ") FROM "
+		String query = "SELECT MAX (" + ORGANIZE_COURSE_ID + ") FROM "
 				+ ORGANIZE_TABLE_NAME;
-		Cursor mcursor = db.rawQuery(count, null);
-		int cCount = mcursor.getCount();
+		Cursor mcursor = db.rawQuery(query, null);
+		mcursor.moveToFirst();
+		int cCount = (int)mcursor.getInt(0);
 		db.close();
 		return cCount;
+	}
+
+	// removes course with course ID targetID
+	public void removeCourseByID(int targetID) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(ORGANIZE_TABLE_NAME, ORGANIZE_COURSE_ID + " = ? ",
+				new String[] { String.valueOf(targetID) });
+		db.close();
+	}
+
+	// returns true iff the database contains a course with courseID target
+	public boolean checkCoursebyID(int target) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor c = db.rawQuery("SELECT * FROM " + ORGANIZE_TABLE_NAME + " WHERE " + ORGANIZE_COURSE_ID + "= " + String.valueOf(target), null);
+		if (c.getCount() == 0) {
+			return false;
+		} 
+		else {
+			return true;
+		}
+	}
+	
+	// returns array containing the course names and corrisponding courseIDs
+	public CourseData[] getCourseIDs(){
+        String query = "SELECT " +ORGANIZE_COURSE_ID + ", " + ORGANIZE_COURSE_NAME + " FROM " + ORGANIZE_TABLE_NAME + " GROUP BY " + ORGANIZE_COURSE_ID ;
+        SQLiteDatabase db = this.getReadableDatabase();
+        
+		CourseData[] data = null;        
+        try {
+        	Cursor cursor = db.rawQuery(query, null);
+        	int q = cursor.getCount();
+        	data = new CourseData[q];
+			if (cursor.moveToFirst()) {
+				int i = 0;
+				do {
+					data[i] = new CourseData(cursor.getString(1), cursor.getString(0));
+					i++;
+				} while (cursor.moveToNext());
+
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
+				}
+			}
+			db.close();
+		} catch (Exception e) {
+
+		}
+        return data;
 	}
 
 	/*

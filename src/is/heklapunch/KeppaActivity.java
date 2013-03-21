@@ -26,6 +26,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -33,12 +34,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -54,6 +56,7 @@ public class KeppaActivity extends Activity {
 	TableLayout station_table;
 	SQLHandler handler;
 	long time;
+	EditText editBox;
 
 	
 	@Override
@@ -66,9 +69,14 @@ public class KeppaActivity extends Activity {
 		//create database object
 		handler = new SQLHandler(this);
 		
+		//get name box
+		editBox =(EditText)findViewById(R.id.saved_name);
+		
 		//make table
 		station_table=(TableLayout)findViewById(R.id.station_table);
 		this.fillTable();
+		
+		
 	}
 	
 	//fill table with content
@@ -95,7 +103,7 @@ public class KeppaActivity extends Activity {
 			t2 = new TextView(this);
 			t3 = new TextView(this);
 
-			t1.setText(entry.get(0).toString());
+			t1.setText(entry.get(2).toString());
 			
 			//fix date
 			String longV = entry.get(1).toString();
@@ -106,7 +114,7 @@ public class KeppaActivity extends Activity {
 			t3.setText(entry.get(3).toString());
 
 			t1.setTypeface(null, 1);
-			t1.setWidth(130);
+			//t1.setWidth(130);
 			t2.setTypeface(null, 1);
 			t2.setWidth(146);
 			t3.setTypeface(null, 1);
@@ -130,8 +138,13 @@ public class KeppaActivity extends Activity {
 
 	// Go to organize mode
 	public void send_info(View view) {
-		Intent o = new Intent(this, SendActivity.class);
-        startActivity(o);
+		if(!this.editBox.getText().toString().equals("")) {
+			Intent o = new Intent(this, SendActivity.class);
+			startActivity(o);
+		}
+		else {
+			Toast.makeText(this, "Nafn keppanda er nauðsynlegt", Toast.LENGTH_SHORT).show();
+		}
 	}
 	
 	// Go to organize mode
@@ -292,5 +305,29 @@ public class KeppaActivity extends Activity {
 		//c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), jsonResult.hour, jsonResult.minute, jsonResult.second);
 		this.time =  jsonResult.milliseconds_since_epoch;  
 	}
+	
+	  protected void onResume() {
+	        super.onResume();
+	        SharedPreferences prefs = getPreferences(0);
+	        String restoredText = prefs.getString("text", null);
+	        if (restoredText != null) {
+	            editBox.setText(restoredText, TextView.BufferType.EDITABLE);
+	 
+	            int selectionStart = prefs.getInt("selection-start", -1);
+	            int selectionEnd = prefs.getInt("selection-end", -1);
+	            if (selectionStart != -1 && selectionEnd != -1) {
+	                editBox.setSelection(selectionStart, selectionEnd);
+	            }
+	        }
+	    }
+	 
+	    protected void onPause() {
+	        super.onPause();
+	        SharedPreferences.Editor editor = getPreferences(0).edit();
+	        editor.putString("text", editBox.getText().toString());
+	        editor.putInt("selection-start", editBox.getSelectionStart());
+	        editor.putInt("selection-end", editBox.getSelectionEnd());
+	        editor.commit();
+	    }
 		
 }
