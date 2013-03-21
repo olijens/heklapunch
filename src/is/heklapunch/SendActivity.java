@@ -30,7 +30,11 @@ public class SendActivity extends Activity {
 		
 		mClient = new BlueToothClient(this);
 		mClient.setDiscoverableTimeout(30);
-		mClient.start();
+		if(!mClient.start()) {
+			Toast.makeText(this, "Unable to start bluetooth", Toast.LENGTH_SHORT).show();
+			finish();
+			return;
+		}
 		
 		if(!mClient.isDiscoverable()) {
 			mClient.ensureDiscoverable();

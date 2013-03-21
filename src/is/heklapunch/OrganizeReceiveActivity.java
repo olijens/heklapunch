@@ -3,13 +3,15 @@ package is.heklapunch;
 import is.heklapunch.bluetooth.BlueToothServer;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.widget.ListView;
 
 public class OrganizeReceiveActivity extends Activity {
 
-//	private static final boolean DEBUG = true;
-//	private static final String TAG = "BTServerActivity";
+	private static final boolean DEBUG = true;
+	private static final String TAG = "OrganizeReceiveActivity";
+	
 	private BlueToothServer mServer;
 	private ListView mPayloadsView;
 
@@ -44,16 +46,19 @@ public class OrganizeReceiveActivity extends Activity {
 		if (mServer != null) {
 			mServer.listen();
 		}
+		if(DEBUG) Log.e(TAG, "++ ON START ++");
 	}
 
 	@Override
 	public synchronized void onResume() {
 		super.onResume();
+		if(DEBUG) Log.e(TAG, "-- ON RESUME --");
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
+		if(DEBUG) Log.e(TAG, "-- ON STOP --");
 	}
 
 	@Override
@@ -64,5 +69,6 @@ public class OrganizeReceiveActivity extends Activity {
 			mServer.stop();
 			mServer = null;
 		}
+		if(DEBUG) Log.e(TAG, "--- ON DESTROY ---");
 	}
 }

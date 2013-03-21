@@ -110,7 +110,7 @@ public class BlueToothClient extends BlueToothBase {
         if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
 
         // Start the thread to connect with the given device
-        mConnectThread = new ConnectThread(device, secure);
+        mConnectThread = new ConnectThread(device, true, secure);
         mConnectThread.start();
         setState(STATE_CONNECTING);
     }

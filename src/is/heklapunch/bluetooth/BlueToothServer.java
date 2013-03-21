@@ -47,6 +47,8 @@ public class BlueToothServer extends BlueToothBase {
 		if(mPayloadsRecieved != null) {
 			mPayloadsRecieved.add(readMessage);
 		}
+		
+		_caller.finish();
     }
 	
 	/* */
@@ -54,12 +56,9 @@ public class BlueToothServer extends BlueToothBase {
 		if(!_listening) {
 			if(start()) {
 				enable();
+				ensureDiscoverable();
 				
-				if(!isDiscoverable()) {
-					ensureDiscoverable();
-				} 
-				
-				if (DEBUG) Log.d(TAG, "start");
+				if (DEBUG) Log.d(TAG, "start listen");
 
 		        // Cancel any thread currently running a connection
 		        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
@@ -85,7 +84,7 @@ public class BlueToothServer extends BlueToothBase {
      */
     public synchronized void stop() {
     	if(_listening) {
-	        if (DEBUG) Log.d(TAG, "stop");
+	        if (DEBUG) Log.d(TAG, "stop listen");
 	
 	        if (mConnectedThread != null) {
 	            mConnectedThread.cancel();
