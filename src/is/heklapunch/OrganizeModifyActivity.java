@@ -30,7 +30,7 @@ public class OrganizeModifyActivity extends Activity {
 	SQLHandler handler;
 	EditText stationNameField;
 	EditText courseNameField;
-	String stationName = "";
+	String courseName = "";
 	ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
 	//int stationNumber = 1;
 	int courseID = -1;
@@ -72,24 +72,27 @@ public class OrganizeModifyActivity extends Activity {
 		if (b.containsKey("courseID")) {
 			courseID = b.getInt("courseID");
 		}
+		//if we are given a courseID to modify, open it for editing, if it exists
 		if(courseID != -1 && handler.checkCoursebyID(courseID)){
 			stationList = handler.getCoursebyID(courseID);
+			//find the course name
 			CourseData[] courseIDs = handler.getCourseIDs();
 			for(int i =0; i < courseIDs.length; i++){
 				if(Integer.valueOf(courseIDs[i].getValue()) == courseID){
-					stationName = handler.getCourseIDs()[i].getSpinnerText();
+					courseName = handler.getCourseIDs()[i].getSpinnerText();
 					break;
 				}
 			}
-			courseNameField.setText(stationName);
+			//place course name in course name field
+			courseNameField.setText(courseName);
 		}
+		//create a new course ID if needed
 		else{
 			courseID = handler.getMaxCourseID() + 1;
 		}
 		
 		// make table
 		station_table = (TableLayout) findViewById(R.id.Create_Station_Table);
-		System.out.print("lol");
 		this.fillTable();
 	}
 
@@ -119,7 +122,7 @@ public class OrganizeModifyActivity extends Activity {
 			t1 = new TextView(this);
 			t2 = new TextView(this);
 
-			t1.setText(entry.get(0).toString());
+			t1.setText(entry.get(2).toString());
 			t2.setText(entry.get(1).toString());
 
 			t1.setTypeface(null, 1);
@@ -146,10 +149,10 @@ public class OrganizeModifyActivity extends Activity {
 		handler.removeCourseByID(courseID);
 		while (i.hasNext()) {
 			ArrayList<?> entry = i.next();
-			int stationNumber = Integer.valueOf(entry.get(0).toString());
+			int stationNumber = Integer.valueOf(entry.get(2).toString());
 			String stationTitle = entry.get(1).toString();
-			String QRValue = entry.get(2).toString();
-			String GPSValue = entry.get(3).toString();
+			String QRValue = entry.get(5).toString();
+			String GPSValue = entry.get(6).toString();
 			handler.addStation(courseTitle, courseID, stationTitle,
 					stationNumber, QRValue, GPSValue);
 		}
@@ -168,7 +171,7 @@ public class OrganizeModifyActivity extends Activity {
 		Iterator<ArrayList<String>> i = stationList.iterator();
 		while (i.hasNext()) {
 			ArrayList<?> entry = i.next();
-			num = Integer.valueOf(entry.get(0).toString()) + 1;
+			num = Integer.valueOf(entry.get(2).toString()) + 1;
 		}
 		return num;
 	}
@@ -186,21 +189,39 @@ public class OrganizeModifyActivity extends Activity {
 					.show();
 			// write to db
 			if (stationNameField.getText().toString() != null) {
-				// add station number
-				tempStation.add(String.valueOf(stationNumber));
+				//add station ID NOTE: this value never needs to be read for new values,
+				// so we just set it to -1 to save time
+				tempStation.add(String.valueOf(-1));
 				// add station name
 				tempStation.add(stationNameField.getText().toString());
+				// add station number
+				tempStation.add(String.valueOf(stationNumber));
+				//add course ID
+				tempStation.add(String.valueOf(courseID));
+				//add course name
+				tempStation.add(String.valueOf(courseName));
 				// add QR code
 				tempStation.add(String.valueOf(scanResult.getContents()));
 				// add GPS
 				// TODO: add working gps!
 				tempStation.add("12345");
 			} else {
-				tempStation.add(String.valueOf(stationNumber));
+				//add station ID NOTE: this value never needs to be read for new values,
+				// so we just set it to -1 to save time
+				tempStation.add(String.valueOf(-1));
+				// add station name
 				tempStation.add("Stöð nr. " + stationNumber);
+				// add station number
+				tempStation.add(String.valueOf(stationNumber));
+				//add course ID
+				tempStation.add(String.valueOf(courseID));
+				//add course name
+				tempStation.add(String.valueOf(courseName));
+				// add QR code
 				tempStation.add(String.valueOf(scanResult.getContents()));
-				// unused field for GPS
-				tempStation.add("");
+				// add GPS
+				// TODO: add working gps!
+				tempStation.add("12345");
 			}
 			stationList.add(tempStation);
 			TableLayout vg = (TableLayout) findViewById(R.id.Create_Station_Table);

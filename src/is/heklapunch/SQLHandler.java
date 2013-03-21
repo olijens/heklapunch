@@ -122,10 +122,12 @@ public class SQLHandler extends SQLiteOpenHelper {
 					//station number
 					station.add(cursor.getString(2));
 					//course ID
-					station.add(cursor.getString(4));
+					station.add(cursor.getString(3));
 					//course name
-					station.add(cursor.getString(5));
+					station.add(cursor.getString(4));
 					//QR value
+					station.add(cursor.getString(5));
+					//GPS value
 					station.add(cursor.getString(6));
 					results.add(station);
 				} while (cursor.moveToNext());
