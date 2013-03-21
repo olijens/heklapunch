@@ -32,7 +32,7 @@ public class OrganizeModifyActivity extends Activity {
 	EditText courseNameField;
 	String stationName = "";
 	ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
-	int stationNumber = 1;
+	//int stationNumber = 1;
 	int courseID = -1;
 	
 	@Override
@@ -128,8 +128,8 @@ public class OrganizeModifyActivity extends Activity {
 			t1.setTextSize(15);
 			t2.setTextSize(15);
 
-			t1.setWidth(150 * dip);
-			t2.setWidth(150 * dip);
+			t1.setWidth(40 * dip);
+			t2.setWidth(260 * dip);
 			row.addView(t1);
 			row.addView(t2);
 
@@ -160,6 +160,18 @@ public class OrganizeModifyActivity extends Activity {
 		IntentIntegrator integrator = new IntentIntegrator(this);
 		integrator.initiateScan();
 	}
+	
+	//get highest station number in the station number list
+	public int getNextStation(){
+		//we start the stations at 30, dunno why....
+		int num = 30;
+		Iterator<ArrayList<String>> i = stationList.iterator();
+		while (i.hasNext()) {
+			ArrayList<?> entry = i.next();
+			num = Integer.valueOf(entry.get(0).toString()) + 1;
+		}
+		return num;
+	}
 
 	// QR Scan result
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -167,6 +179,7 @@ public class OrganizeModifyActivity extends Activity {
 
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, intent);
+		int stationNumber = getNextStation();
 		if (scanResult != null && scanResult.getContents().length() != 0) {
 			// handle scan result
 			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT)
@@ -182,14 +195,12 @@ public class OrganizeModifyActivity extends Activity {
 				// add GPS
 				// TODO: add working gps!
 				tempStation.add("12345");
-				stationNumber++;
 			} else {
 				tempStation.add(String.valueOf(stationNumber));
 				tempStation.add("Stöð nr. " + stationNumber);
 				tempStation.add(String.valueOf(scanResult.getContents()));
 				// unused field for GPS
 				tempStation.add("");
-				stationNumber++;
 			}
 			stationList.add(tempStation);
 			TableLayout vg = (TableLayout) findViewById(R.id.Create_Station_Table);

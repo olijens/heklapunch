@@ -115,11 +115,17 @@ public class SQLHandler extends SQLiteOpenHelper {
 			if (cursor.moveToFirst()) {
 				do {
 					ArrayList<String> station = new ArrayList<String>();
+					//station ID
 					station.add(cursor.getString(0));
+					//station name
 					station.add(cursor.getString(1));
+					//station number
 					station.add(cursor.getString(2));
+					//course ID
 					station.add(cursor.getString(4));
+					//course name
 					station.add(cursor.getString(5));
+					//QR value
 					station.add(cursor.getString(6));
 					results.add(station);
 				} while (cursor.moveToNext());
