@@ -251,7 +251,7 @@ public abstract class BlueToothBase {
         }
 
         public void run() {
-            Log.i(TAG, "BEGIN mConnectedThread");
+            Log.d(TAG, "BEGIN mConnectedThread");
             byte[] buffer = new byte[1024];
             int bytes;
 
@@ -322,7 +322,7 @@ public abstract class BlueToothBase {
                 if (secure) {
                     tmp = device.createRfcommSocketToServiceRecord(_uuid_secure);
                 } else {
-                    tmp = device.createInsecureRfcommSocketToServiceRecord(_uuid_insecure);
+                  tmp = device.createInsecureRfcommSocketToServiceRecord(_uuid_insecure);
                 }
                 Log.d(TAG, "Socket Type: " + mSocketType + "create() OK");
             } catch (IOException e) {

@@ -20,12 +20,7 @@ public class OrganizeReceiveActivity extends Activity {
 		//
 		if (mServer == null) {
 			mServer = new BlueToothServer(this, null);
-			mServer.listen();
 		}
-		
-		if(!mServer.isDiscoverable()) {
-			mServer.ensureDiscoverable();
-		} 
 
 		// Setup the window
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -46,8 +41,7 @@ public class OrganizeReceiveActivity extends Activity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if (mServer == null) {
-			mServer = new BlueToothServer(this, null);
+		if (mServer != null) {
 			mServer.listen();
 		}
 	}
@@ -55,24 +49,11 @@ public class OrganizeReceiveActivity extends Activity {
 	@Override
 	public synchronized void onResume() {
 		super.onResume();
-
-		// Performing this check in onResume() covers the case in which BT was
-		// not enabled during onStart(), so we were paused to enable it...
-		// onResume() will be called when ACTION_REQUEST_ENABLE activity
-		// returns.
-		if (mServer == null) {
-			mServer = new BlueToothServer(this, null);
-			mServer.listen();
-		}
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		if (mServer != null) {
-			mServer.stop();
-			mServer = null;
-		}
 	}
 
 	@Override

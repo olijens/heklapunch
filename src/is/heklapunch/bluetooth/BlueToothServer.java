@@ -44,8 +44,9 @@ public class BlueToothServer extends BlueToothBase {
 					"READ: " + readMessage, Toast.LENGTH_LONG).show();
 		}
 		
-		if(mPayloadsRecieved != null)
+		if(mPayloadsRecieved != null) {
 			mPayloadsRecieved.add(readMessage);
+		}
     }
 	
 	/* */
@@ -53,6 +54,10 @@ public class BlueToothServer extends BlueToothBase {
 		if(!_listening) {
 			if(start()) {
 				enable();
+				
+				if(!isDiscoverable()) {
+					ensureDiscoverable();
+				} 
 				
 				if (DEBUG) Log.d(TAG, "start");
 

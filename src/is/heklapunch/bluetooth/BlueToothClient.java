@@ -30,11 +30,10 @@ public class BlueToothClient extends BlueToothBase {
 		if(super.start()) {
 			enable();
 			_started = true;
-			return true;
 		} else {
 			if (DEBUG) Log.d(TAG, "Unable to start bluetooth");
 		}
-		return false;
+		return _started;
 	}
 	
 	/* */
@@ -53,7 +52,7 @@ public class BlueToothClient extends BlueToothBase {
 	/* */
 	public void connectToDevice(Intent data, boolean secure) {
 		if(_started) {
-	    	if(DEBUG) Log.d(TAG, " connectDevice");
+	    	if(DEBUG) Log.d(TAG, "connectDevice");
 	    	
 	        // Get the device MAC address
 	        String address = data.getExtras()
