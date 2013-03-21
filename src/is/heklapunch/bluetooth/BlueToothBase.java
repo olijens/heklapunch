@@ -6,6 +6,8 @@ package is.heklapunch.bluetooth;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import android.annotation.SuppressLint;
@@ -349,6 +351,7 @@ public abstract class BlueToothBase {
                     Log.e(TAG, "unable to close() " + mSocketType +
                             " socket during connection failure", e2);
                 }
+                Log.e(TAG, "socket failure " + mSocketType, e);
                 connectionFailed();
                 return;
             }

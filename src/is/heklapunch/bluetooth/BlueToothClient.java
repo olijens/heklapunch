@@ -89,6 +89,8 @@ public class BlueToothClient extends BlueToothBase {
 				Toast.makeText(_caller.getApplicationContext(),
 						"WRITE: " + writeMessage, Toast.LENGTH_LONG).show();
 			}
+			
+//			_caller.finish();
 		}
     }
 	

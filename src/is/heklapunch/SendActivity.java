@@ -29,7 +29,7 @@ public class SendActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		mClient = new BlueToothClient(this);
-		mClient.setDiscoverableTimeout(10);
+		mClient.setDiscoverableTimeout(30);
 		mClient.start();
 		
 		if(!mClient.isDiscoverable()) {
@@ -96,7 +96,11 @@ public class SendActivity extends Activity {
 			Log.d(TAG, "onActivityResult " + resultCode);
 		switch (requestCode) {
 		case BlueToothClient.REQUEST_MAKE_DISCOVERABLE:
-			startBTpairingIntent();
+			if(resultCode == RESULT_CANCELED) {
+				finish();
+			} else {
+				startBTpairingIntent();
+			}
 			break;
 		case BlueToothClient.REQUEST_CONNECT_DEVICE_SECURE:
 			if (DEBUG)
