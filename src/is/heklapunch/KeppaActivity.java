@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -308,8 +309,9 @@ public class KeppaActivity extends Activity {
 	
 	  protected void onResume() {
 	        super.onResume();
-	        SharedPreferences prefs = getPreferences(0);
-	        String restoredText = prefs.getString("text", null);
+	        SharedPreferences prefs = this.getSharedPreferences("competitor_name", Context.MODE_PRIVATE);
+
+	        String restoredText = prefs.getString("competitor_name", null);
 	        if (restoredText != null) {
 	            editBox.setText(restoredText, TextView.BufferType.EDITABLE);
 	 
@@ -323,8 +325,9 @@ public class KeppaActivity extends Activity {
 	 
 	    protected void onPause() {
 	        super.onPause();
-	        SharedPreferences.Editor editor = getPreferences(0).edit();
-	        editor.putString("text", editBox.getText().toString());
+	        SharedPreferences prefs = this.getSharedPreferences("competitor_name", Context.MODE_PRIVATE);
+	        SharedPreferences.Editor editor = prefs.edit();
+	        editor.putString("competitor_name", editBox.getText().toString());
 	        editor.putInt("selection-start", editBox.getSelectionStart());
 	        editor.putInt("selection-end", editBox.getSelectionEnd());
 	        editor.commit();

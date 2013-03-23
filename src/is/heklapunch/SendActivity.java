@@ -8,10 +8,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
@@ -65,8 +67,9 @@ public class SendActivity extends Activity {
 			payload.put(entry.get(0).toString(), entry.get(1).toString());
 		}
 		
-		SharedPreferences prefs = getPreferences(0);
-        String restoredText = prefs.getString("text", null);
+		SharedPreferences pref = this.getSharedPreferences("competitor_name", Context.MODE_PRIVATE);
+        String restoredText = pref.getString("competitor_name", null);
+        
         if(restoredText == null) restoredText = "NO USERNAME";
         payload.put("username", restoredText);
 

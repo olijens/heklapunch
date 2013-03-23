@@ -45,8 +45,9 @@ public class SQLHandler extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String createCompetitorTable = "CREATE TABLE " + COMPETE_TABLE_NAME
 				+ "(" + COMPETE_STATION_NAME + " TEXT NOT NULL,"
-				+ COMPETE_STATION_TIME + " LONG NOT NULL," + COMPETE_TIME_CHECK
-				+ " INT NOT NULL," + COMPETE_QR_VALUE + " TEXT NOT NULL,"
+				+ COMPETE_STATION_TIME + " LONG NOT NULL," 
+				+ COMPETE_TIME_CHECK + " INT NOT NULL," 
+				+ COMPETE_QR_VALUE + " TEXT NOT NULL,"
 				+ COMPETE_GPS_LOCATION + " TEXT NOT NULL)";
 
 		String createCoursesTable = "CREATE TABLE " + ORGANIZE_TABLE_NAME
@@ -59,6 +60,8 @@ public class SQLHandler extends SQLiteOpenHelper {
 				+ "UNIQUE (" + ORGANIZE_COURSE_ID + ", " + ORGANIZE_QR_VALUE
 				+ " ), " + "UNIQUE (" + ORGANIZE_COURSE_ID + ", "
 				+ ORGANIZE_STATION_NUMBER + " )" + " )";
+		
+		
 		db.execSQL(createCompetitorTable);
 		db.execSQL(createCoursesTable);
 	}
