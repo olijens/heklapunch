@@ -19,7 +19,12 @@ public class OrganizeCreateActivityTest extends
 		mActivity = getActivity();
 
 	}
-
+	
+	@SuppressWarnings("deprecation")
+	public OrganizeCreateActivityTest() {
+        super("", OrganizeCreateActivity.class);
+	}
+	
 	@SuppressLint("NewApi")
 	public OrganizeCreateActivityTest(
 			Class<OrganizeCreateActivity> activityClass) {
@@ -28,7 +33,6 @@ public class OrganizeCreateActivityTest extends
 	}
 
 	public void testPreConditions() {
-		// WILL FAIL
 		assertTrue(mActivity.courses != null);
 	} 
 }
