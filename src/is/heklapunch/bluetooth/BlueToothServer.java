@@ -11,13 +11,21 @@ package is.heklapunch.bluetooth;
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
  * IN THE SOFTWARE.
  * */
+import is.heklapunch.SQLHandler;
+import is.heklapunch.TimeItemResult;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import com.google.gson.Gson;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -42,22 +50,37 @@ public class BlueToothServer extends BlueToothBase {
 	}
 	
 	@Override
-    protected void onMessageRead(Message msg) {
+	protected void onMessageRead(Message msg) {
 		byte[] readBuf = (byte[]) msg.obj;
 		String readMessage = new String(readBuf, 0, msg.arg1);
-		
-		if(DEBUG) {
+
+		if (DEBUG) {
 			Log.d(TAG, "READ: " + readMessage);
-			Toast.makeText(_caller.getApplicationContext(),
-					"READ: " + readMessage, Toast.LENGTH_LONG).show();
+			// Toast.makeText(_caller.getApplicationContext(),"READ: " +
+			// readMessage, Toast.LENGTH_LONG).show();
+
+		}
+		// Tengjast gagnasafni
+		SQLHandler handler = new SQLHandler(_caller.getApplicationContext());
+		
+		//Taka við gögnum og umbreyta
+		Gson gson = new Gson();
+		ArrayList<ArrayList<String>> results = gson.fromJson(readMessage, ArrayList.class);
+		//ArrayList<String> test = results.get(0);
+		//Toast.makeText(_caller.getApplicationContext(),"Parsed: " + test.get(0).toString(), Toast.LENGTH_LONG).show();
+		Iterator<ArrayList<String>> i = results.iterator();
+		
+		while(i.hasNext()) {
+			//Skrifa í töflu 
+			ArrayList<String> entry = i.next();
+			handler.addResult(entry.get(0), Long.valueOf(entry.get(1)),entry.get(2).toString(), Boolean.valueOf(entry.get(3)), entry.get(4), entry.get(5));
 		}
 		
-		if(mPayloadsRecieved != null) {
-			mPayloadsRecieved.add(readMessage);
-		}
+		ArrayList<ArrayList<String>> res =  handler.getAllResults();
 		
+		Toast.makeText(_caller.getApplicationContext(),"Parsed: " + res.toString(), Toast.LENGTH_LONG).show();
 		_caller.finish();
-    }
+	}
 	
 	/** 
 	 * Start the server, listen to connected devices

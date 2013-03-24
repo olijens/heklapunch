@@ -29,7 +29,8 @@
     <string name="title_activity_send">SendActivity</string>
     <string name="send_data">Senda Gögn</string>
     <string name="title_activity_blue_tooth">BlueToothActivity</string>
-      <string name="saved_name">Nafn keppanda:</string>
+    <string name="saved_name">Nafn keppanda:</string>
+    <string name="delete_result">Eyða gögnum</string>
     
         <!--  DeviceListActivity -->
     <string name="scanning">scanning for devices...</string>
