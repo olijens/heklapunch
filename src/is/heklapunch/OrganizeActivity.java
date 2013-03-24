@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -86,6 +87,9 @@ public class OrganizeActivity extends Activity {
 
 		ArrayList<ArrayList<String>> results = handler.getAllResults();
 		Iterator<ArrayList<String>> ii = results.iterator();
+		
+		
+		
 		//Find all competitors
 		Vector competitors = new Vector();
 		while (ii.hasNext()) {
@@ -94,9 +98,19 @@ public class OrganizeActivity extends Activity {
 				competitors.add(entry.get(5));
 			}
 		}
+		
+		Log.d("Logatest", "Fjöldi keppanda: " + competitors.size());
+		
 		//Get total time for each competitor
 	    Iterator itr = competitors.iterator();
-		while(itr.hasNext()){
+		
+	    while(itr.hasNext()){
+	    	//set correctes to true
+	    	boolean isCorrect= true;
+			//To check if order is correct
+			ArrayList<ArrayList<String>> course = handler.getCoursebyID(1);
+			Log.d("Logatest", "Stærð brautar: " + course.size());
+			
 			//Get all entries for each competitor and calculate total time
 			ArrayList<ArrayList<String>> indResults = handler.getResultsForCompetitor(itr.next().toString());
 			ArrayList<?> fentry = indResults.get(0);
@@ -112,8 +126,36 @@ public class OrganizeActivity extends Activity {
 			//Make proper date string
 			String dateString = DateFormat.format("kk:mm:ss", new Date(total)).toString();
 			
+			//Compare to the actual course
+			Iterator<ArrayList<String>> i = course.iterator();
+			Iterator<ArrayList<String>> i2 = indResults.iterator();
+			
+			if(course.size() == indResults.size()){
+				while(i.hasNext()) {
+					
+					ArrayList<?> entry = i.next();				
+					ArrayList<?> entry2 = i2.next();
+					
+					String e = entry.get(5).toString();
+					Log.d("Logatest", "entry er " + e);
+					String e2 = entry2.get(3).toString();
+					Log.d("Logatest", "entry2 er " + e2);
+					if(!e.equalsIgnoreCase(e2)){
+						isCorrect = false;
+					}
+					
+				}
+			}else{
+				isCorrect = false;
+			}
+			
 			//Add to database
-			handler.addStanding(fentry.get(5).toString(), dateString);
+			if(isCorrect){
+				handler.addStanding(fentry.get(5).toString(), dateString);
+			}
+			else{
+				handler.addStanding(fentry.get(5).toString(), "Villa hjá hlaupara");
+			}
 		}
 		
 		ArrayList<ArrayList<String>> standings =  handler.getAllStandings();
@@ -132,9 +174,9 @@ public class OrganizeActivity extends Activity {
 			t2.setText(entry.get(1).toString());
 
 			t1.setTypeface(null, 1);
-			// t1.setWidth(130);
+			t1.setWidth(150);
 			t2.setTypeface(null, 1);
-			t2.setWidth(146);
+			t2.setWidth(400);
 
 			t1.setTextSize(15);
 			t2.setTextSize(15);

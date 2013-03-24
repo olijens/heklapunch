@@ -55,18 +55,82 @@ public class KeppaActivity extends Activity {
 	SQLHandler handler;
 	long time;
 	EditText editBox;
-
+	boolean isTimeChecked; 
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_keppa);
 		//Set time object
-		time = System.currentTimeMillis();
+		if(isOnline()){				
+			
+			//Use json service http://json-time.appspot.com/time.json?tz=GMT
+			@SuppressLint("NewApi")
+			class GetTimeFromServer extends AsyncTask<String, Void, String> {
+
+				public KeppaActivity activity;
+
+				public GetTimeFromServer(KeppaActivity a) {
+					activity = a;
+				}
+
+				@Override
+				protected String doInBackground(String... urls) {
+					String url = urls[0];
+					String response = "";
+					// Log.v("tester", "execute request");
+					HttpClient client = new DefaultHttpClient();
+					HttpResponse httpResponse;
+
+					HttpGet getRequest = new HttpGet(url);
+
+					try {
+						httpResponse = client.execute(getRequest);
+						HttpEntity entity = httpResponse.getEntity();
+						// Log.v("entity test", entity.getContent().toString());
+
+						if (entity != null) {
+							// Log.v("tester", "execute entity er ekki núll");
+							InputStream instream = entity.getContent();
+							BufferedReader reader = new BufferedReader(
+									new InputStreamReader(instream, "UTF-8"), 8);
+							StringBuilder sb = new StringBuilder(100000);
+							String line = null;
+							try {
+								while ((line = reader.readLine()) != null) {
+									sb.append(line + "\n");
+								}
+								instream.close();
+							} catch (IOException e) {
+							}
+							response = sb.toString();
+							Log.v("tester", "hér er response size: " + response.length());
+							instream.close();
+						}
+					} catch (Exception e) {
+						Log.v("tester", "villa í execute request: " + e.toString());
+					}
+
+					return response;
+				}
+
+				@Override
+				protected void onPostExecute(String result) {
+					// Log.v("Logatest onPostExecute", result);
+					activity.setTime(result);
+				}
+			}// inner class end
+		
+			//run inner class and correct the time of the app
+			GetTimeFromServer task = new GetTimeFromServer(this);
+			//set the time object
+			task.execute(new String[] { "http://date.jsontest.com/" });					
+			isTimeChecked = true;
+		}
+		
 		
 		//create database object
-		handler = new SQLHandler(this);
-		
+		handler = new SQLHandler(this);	
 		//get name box
 		editBox =(EditText)findViewById(R.id.saved_name);
 		
@@ -164,77 +228,11 @@ public class KeppaActivity extends Activity {
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);		
 		if (scanResult != null && scanResult.getContents().length() != 0) {
 			// handle scan result
-			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT).show();
-			//Try to get time from gps
-			if(isOnline()){				
+			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT).show();		
+			//Set time object
+			time = System.currentTimeMillis();
 				
-				//Use json service http://json-time.appspot.com/time.json?tz=GMT
-				@SuppressLint("NewApi")
-				class GetTimeFromServer extends AsyncTask<String, Void, String> {
-
-					public KeppaActivity activity;
-
-					public GetTimeFromServer(KeppaActivity a) {
-						activity = a;
-					}
-
-					@Override
-					protected String doInBackground(String... urls) {
-						String url = urls[0];
-						String response = "";
-						// Log.v("tester", "execute request");
-						HttpClient client = new DefaultHttpClient();
-						HttpResponse httpResponse;
-
-						HttpGet getRequest = new HttpGet(url);
-
-						try {
-							httpResponse = client.execute(getRequest);
-							HttpEntity entity = httpResponse.getEntity();
-							// Log.v("entity test", entity.getContent().toString());
-
-							if (entity != null) {
-								// Log.v("tester", "execute entity er ekki núll");
-								InputStream instream = entity.getContent();
-								BufferedReader reader = new BufferedReader(
-										new InputStreamReader(instream, "UTF-8"), 8);
-								StringBuilder sb = new StringBuilder(100000);
-								String line = null;
-								try {
-									while ((line = reader.readLine()) != null) {
-										sb.append(line + "\n");
-									}
-									instream.close();
-								} catch (IOException e) {
-								}
-								response = sb.toString();
-								Log.v("tester", "hér er response size: " + response.length());
-								instream.close();
-							}
-						} catch (Exception e) {
-							Log.v("tester", "villa í execute request: " + e.toString());
-						}
-
-						return response;
-					}
-
-					@Override
-					protected void onPostExecute(String result) {
-						// Log.v("Logatest onPostExecute", result);
-						activity.setTime(result);
-					}
-				}// inner class end
-
-			
-					GetTimeFromServer task = new GetTimeFromServer(this);
-					//set the time object
-					task.execute(new String[] { "http://date.jsontest.com/" });					
-					isTimeChecked = true;
-			}
-			else{
-				//We just use the time that is set in the init function
-				isTimeChecked = false;
-			}
+		
 			//write to db			
 			handler.addStation("Stöð " + Integer.toString(handler.count()+30),time,scanResult.getContents(), isTimeChecked, this.getGPS());
 			//redraw view

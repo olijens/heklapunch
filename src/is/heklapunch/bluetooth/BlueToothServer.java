@@ -73,7 +73,8 @@ public class BlueToothServer extends BlueToothBase {
 		while(i.hasNext()) {
 			//Skrifa í töflu 
 			ArrayList<String> entry = i.next();
-			handler.addResult(entry.get(0), Long.valueOf(entry.get(1)),entry.get(2).toString(), Boolean.valueOf(entry.get(3)), entry.get(4), entry.get(5));
+			Log.d("Results coming in: ", entry.toString());
+			handler.addResult(entry.get(0), Long.valueOf(entry.get(1)),entry.get(3), Boolean.valueOf(entry.get(2)), entry.get(4), entry.get(5));
 		}
 		
 		ArrayList<ArrayList<String>> res =  handler.getAllResults();

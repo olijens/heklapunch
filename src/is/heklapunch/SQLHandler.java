@@ -136,7 +136,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 		try {
 			Cursor cursor = db.rawQuery("SELECT * FROM " + ORGANIZE_TABLE_NAME
 					+ " WHERE " + ORGANIZE_COURSE_ID + "=" + courseID
-					+ " ORDER BY " + ORGANIZE_STATION_NUMBER, null);
+					+ " ORDER BY " + ORGANIZE_STATION_NUMBER + " ASC", null);
 			if (cursor.moveToFirst()) {
 				do {
 					ArrayList<String> station = new ArrayList<String>();
@@ -327,6 +327,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 	public void deleteResults() {
 			SQLiteDatabase db = this.getWritableDatabase();
 			db.delete(RESULT_TABLE_NAME, null, null);
+			db.delete(STANDING_TABLE_NAME, null, null);
 			db.close();
 	}
 
@@ -420,7 +421,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery("SELECT * FROM " + RESULT_TABLE_NAME
-				+ " WHERE " + RESULT_COMPETITOR_NAME +" = '" + name + "' ORDER BY " + COMPETE_STATION_TIME, null);
+				+ " WHERE " + RESULT_COMPETITOR_NAME +" = '" + name + "' ORDER BY " + COMPETE_STATION_TIME+ " ASC", null);
 		if (cursor.moveToFirst()) {
 			do {
 				ArrayList<String> station = new ArrayList<String>();
