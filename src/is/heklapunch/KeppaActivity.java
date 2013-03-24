@@ -127,6 +127,10 @@ public class KeppaActivity extends Activity {
 			task.execute(new String[] { "http://date.jsontest.com/" });					
 			isTimeChecked = true;
 		}
+		else {
+			time = System.currentTimeMillis(); 
+			isTimeChecked = false;
+		}
 		
 		
 		//create database object
