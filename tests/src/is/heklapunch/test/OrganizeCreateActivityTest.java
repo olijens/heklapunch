@@ -35,4 +35,8 @@ public class OrganizeCreateActivityTest extends
 	public void testPreConditions() {
 		assertTrue(mActivity.courses != null);
 	} 
+	
+	public void testPostConditions() {
+		assertTrue(mActivity.courses != null);
+	} 
 }
