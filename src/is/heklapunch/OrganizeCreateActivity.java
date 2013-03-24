@@ -22,7 +22,7 @@ public class OrganizeCreateActivity extends Activity {
 	ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
 	int stationNumber = 1;
 	Spinner courseSpinner;
-	CourseData[] courses;
+	public CourseData[] courses;
 	int selectedCourseID = -1;
 
 	@Override
