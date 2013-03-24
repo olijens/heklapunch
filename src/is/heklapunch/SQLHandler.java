@@ -57,7 +57,8 @@ public class SQLHandler extends SQLiteOpenHelper {
 				+ "("
 				+ RESULT_COMPETITOR_NAME + " TEXT NOT NULL,"
 				+ TOTAL_TIME + " TEXT NOT NULL" 
-				+ ")";
+				+ " " + ", UNIQUE (" + RESULT_COMPETITOR_NAME + ", "
+				+ TOTAL_TIME + " )" + " )";
 		
 		String createResultTable = "CREATE TABLE " + RESULT_TABLE_NAME
 				+ "("
