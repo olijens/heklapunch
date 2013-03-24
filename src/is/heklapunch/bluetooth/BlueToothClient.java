@@ -28,7 +28,9 @@ public class BlueToothClient extends BlueToothBase {
 	private String _payload;
 	private boolean _started = false;
 	
-	/* */
+	/**
+	 * @param	Activity caller 
+	 * */
 	public BlueToothClient(Activity caller) {
 		_caller = caller;
 	}
@@ -44,7 +46,10 @@ public class BlueToothClient extends BlueToothBase {
 		return _started;
 	}
 	
-	/* */
+	/** 
+	 * Return a list of paired devices
+	 * @return Set
+	 * */
 	public Set<BluetoothDevice> getPaired() {
 		if(mBluetoothAdapter != null)
 			return mBluetoothAdapter.getBondedDevices();
@@ -52,12 +57,19 @@ public class BlueToothClient extends BlueToothBase {
 		return null;
 	}
 	
-	/* */
+	/**
+	 * Set the sent payload
+	 * @param String
+	 * */
 	public void send(String payload) {
 		_payload = payload;
 	}
 	
-	/* */
+	/** 
+	 * Connect to device
+	 * @param  Intent
+	 * @param  boolean	Use secure connection
+	 * */
 	public void connectToDevice(Intent data, boolean secure) {
 		if(_started) {
 	    	if(DEBUG) Log.d(TAG, "connectDevice");

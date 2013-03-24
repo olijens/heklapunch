@@ -1,28 +1,16 @@
 package is.heklapunch;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.util.TypedValue;
-import android.view.ViewGroup.LayoutParams;
 
 public class OrganizeCreateActivity extends Activity {
 
@@ -34,7 +22,7 @@ public class OrganizeCreateActivity extends Activity {
 	ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
 	int stationNumber = 1;
 	Spinner courseSpinner;
-	CourseData[] courses;
+	public CourseData[] courses;
 	int selectedCourseID = -1;
 
 	@Override

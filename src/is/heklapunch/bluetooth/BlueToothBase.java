@@ -75,27 +75,39 @@ public abstract class BlueToothBase {
 	public ConnectThread mConnectThread;
 	protected boolean HTCWorkaround = true;
 
-	/* */
-	protected void onConnected() {
-	}
+	/**
+	 * Called on successfull connection
+	 * */
+	protected void onConnected() { }
 
-	/* */
-	protected void onConnecting() {
-	}
+	/**
+	 * Called when connecting
+	 * */
+	protected void onConnecting() { }
 
-	/* */
-	protected void onNotConnected() {
-	}
+	/** 
+	 *  Called on not connected event
+	 * */
+	protected void onNotConnected() { }
 
-	/* */
-	protected void onMessageWrite(Message msg) {
-	}
+	/**
+	 * Called after message has been written to 
+	 * connected device 
+	 * @param	Message
+	 * */
+	protected void onMessageWrite(Message msg) { }
 
-	/* */
-	protected void onMessageRead(Message msg) {
-	}
+	/** 
+	 * Called after message has been read from 
+	 * connected device 
+	 * @param	Message
+	 * */
+	protected void onMessageRead(Message msg) { }
 
-	/* save the connected device's name */
+	/** 
+	 * Report connected device's name 
+	 * @param	Message
+	 * */
 	protected void onMessageDeviceName(Message msg) {
 		mConnectedDeviceName = msg.getData().getString(
 				BlueToothMessageHandler.DEVICE_NAME);
@@ -106,7 +118,10 @@ public abstract class BlueToothBase {
 				+ mConnectedDeviceName);
 	}
 
-	/* */
+	/** 
+	 * Show message as Toast
+	 * @param	Message
+	 * */
 	protected void onMessageToast(Message msg) {
 		if (_caller != null) {
 			Toast.makeText(_caller.getApplicationContext(),
@@ -119,12 +134,18 @@ public abstract class BlueToothBase {
 								.getString(BlueToothMessageHandler.TOAST));
 	}
 
-	/* */
+	/** 
+	 * Set timeout for device discoverability
+	 * @param	Int 
+	 * */
 	public void setDiscoverableTimeout(int Secs) {
 		_discSec = Secs > 0 ? Secs : 0;
 	}
 
-	/* */
+	/** 
+	 * Start bluetooth
+	 * @return	Boolean
+	 * */
 	public boolean start() {
 		if (_caller == null) {
 			_last_error = "Missing caller Activity";
@@ -144,12 +165,17 @@ public abstract class BlueToothBase {
 		return true;
 	}
 
-	/* */
+	/** 
+	 * Is device in discoverability mode
+	 * @return	Boolean
+	 * */
 	public boolean isDiscoverable() {
 		return (mBluetoothAdapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE);
 	}
 
-	/* */
+	/** 
+	 * Make device discoverable
+	 * */
 	public void ensureDiscoverable() {
 		if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
 			int discSec = _discSec <= 0 ? DEFAULT_DISCOVERABLE_SECONDS
@@ -167,7 +193,9 @@ public abstract class BlueToothBase {
 			Log.d(TAG, "+ ensureDiscoverable +");
 	}
 
-	/* */
+	/**
+	 * Enable bluetooth
+	 * */
 	public void enable() {
 		// Enable bluetooth
 		if (!mBluetoothAdapter.isEnabled()) {
@@ -180,7 +208,10 @@ public abstract class BlueToothBase {
 			Log.d(TAG, "+ ENABLE +");
 	}
 
-	/**/
+	/**
+	 * Returns last error if any
+	 * @return String
+	 * */
 	public String getLastError() {
 		return _last_error;
 	}

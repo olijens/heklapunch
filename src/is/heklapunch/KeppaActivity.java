@@ -27,7 +27,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -35,10 +34,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
@@ -87,8 +84,6 @@ public class KeppaActivity extends Activity {
 		TableRow row;
 		TextView t1, t2, t3;
 		//Converting to dip unit
-		int dip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-				(float) 1, getResources().getDisplayMetrics());
 		
 		ArrayList<ArrayList<String>> results =  handler.getAllStations();
 		
