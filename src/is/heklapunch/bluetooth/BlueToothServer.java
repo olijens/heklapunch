@@ -59,7 +59,9 @@ public class BlueToothServer extends BlueToothBase {
 		_caller.finish();
     }
 	
-	/* */
+	/** 
+	 * Start the server, listen to connected devices
+	 * */
 	public void listen() {
 		if(!_listening) {
 			if(start()) {
