@@ -53,31 +53,39 @@ public class SendActivity extends Activity {
 	}
 
 	/*
-	 * Smíðar JSON gagnastreng til að senda á umsjónarmann
+	 * Smíðar JSON gagnastreng til að senda á umsjónarmanns
 	 * */
 	private String get_payload() {
-		// Senda lista
+			
+		//Tengjast gagnasafni
 		SQLHandler handler = new SQLHandler(this);
 		ArrayList<ArrayList<String>> results = handler.getAllStations();
+		//Gögn frá gagnasafni í ArrayLista
 		Iterator<ArrayList<String>> i = results.iterator();
-		Map<String, String> payload = new HashMap<String, String>();
-
-		while (i.hasNext()) {
-			ArrayList<?> entry = i.next();
-			payload.put(entry.get(0).toString(), entry.get(1).toString());
-		}
 		
+		//Hlutur sem verður sendur
+		ArrayList<ArrayList<String>> payload = new ArrayList<ArrayList<String>>();
+		
+		//Ná í nafn keppanda
 		SharedPreferences pref = this.getSharedPreferences("competitor_name", Context.MODE_PRIVATE);
         String restoredText = pref.getString("competitor_name", null);
-        
+        //Setjum nafn ef það finnst ekki
         if(restoredText == null) restoredText = "NO USERNAME";
-        payload.put("username", restoredText);
-
-		String json = new GsonBuilder().create().toJson(payload, Map.class);
+        
+        //Bæta við upplýsingum um stöðvar
+		while (i.hasNext()) {
+			ArrayList<String> entry = i.next();
+			//Bæta við nafni keppanda við stöðina
+			entry.add(restoredText);
+			payload.add(entry);
+		}
 		
-		if (DEBUG)
-			Toast.makeText(this, json, Toast.LENGTH_LONG).show();
+		//Byggjum JSON streng
+		String json = new GsonBuilder().create().toJson(payload,ArrayList.class);
 		
+		if (DEBUG){
+			//Toast.makeText(this, json, Toast.LENGTH_LONG).show();
+		}
 		return json;
 	}
 	
@@ -167,5 +175,5 @@ public class SendActivity extends Activity {
         }
         if(DEBUG) Log.e(TAG, "--- ON DESTROY ---");
     }
-
+   
 }

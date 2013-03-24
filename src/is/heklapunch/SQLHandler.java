@@ -19,6 +19,8 @@ public class SQLHandler extends SQLiteOpenHelper {
 	private static final int DB_VERSION = 2;
 	private static final String DATABASE_NAME = "hekladb";
 	private static final String COMPETE_TABLE_NAME = "keppandi";
+	private static final String STANDING_TABLE_NAME = "standing";
+	private static final String RESULT_TABLE_NAME = "results";
 	private static final String COMPETE_STATION_NAME = "stationname";
 	private static final String COMPETE_STATION_TIME = "stationtime";
 	private static final String COMPETE_QR_VALUE = "qrvalue";
@@ -32,6 +34,8 @@ public class SQLHandler extends SQLiteOpenHelper {
 	private static final String ORGANIZE_STATION_NAME = "stationname";
 	private static final String ORGANIZE_QR_VALUE = "qrvalue";
 	private static final String ORGANIZE_GPS_VALUE = "gpsvalue";
+	private static final String RESULT_COMPETITOR_NAME = "nafn_keppanda";
+	private static final String TOTAL_TIME = "total_time";
 
 	// required constructor
 	public SQLHandler(Context context) {
@@ -44,11 +48,28 @@ public class SQLHandler extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		String createCompetitorTable = "CREATE TABLE " + COMPETE_TABLE_NAME
-				+ "(" + COMPETE_STATION_NAME + " TEXT NOT NULL,"
+				+ "(" 
+				+ COMPETE_STATION_NAME + " TEXT NOT NULL,"
 				+ COMPETE_STATION_TIME + " LONG NOT NULL," 
 				+ COMPETE_TIME_CHECK + " INT NOT NULL," 
 				+ COMPETE_QR_VALUE + " TEXT NOT NULL,"
 				+ COMPETE_GPS_LOCATION + " TEXT NOT NULL)";
+		
+		String  createStandingTable = "CREATE TABLE " + STANDING_TABLE_NAME
+				+ "("
+				+ RESULT_COMPETITOR_NAME + " TEXT NOT NULL,"
+				+ TOTAL_TIME + " TEXT NOT NULL" 
+				+ ")";
+		
+		String createResultTable = "CREATE TABLE " + RESULT_TABLE_NAME
+				+ "("
+				+ COMPETE_STATION_NAME + " TEXT NOT NULL,"
+				+ COMPETE_STATION_TIME + " LONG NOT NULL," 
+				+ COMPETE_TIME_CHECK + " INT NOT NULL," 
+				+ COMPETE_QR_VALUE + " TEXT NOT NULL,"
+				+ COMPETE_GPS_LOCATION + " TEXT NOT NULL," 
+				+ RESULT_COMPETITOR_NAME + " TEXT NOT NULL"
+				+ ")";
 
 		String createCoursesTable = "CREATE TABLE " + ORGANIZE_TABLE_NAME
 				+ " (" + ORGANIZE_STATION_ID
@@ -60,9 +81,10 @@ public class SQLHandler extends SQLiteOpenHelper {
 				+ "UNIQUE (" + ORGANIZE_COURSE_ID + ", " + ORGANIZE_QR_VALUE
 				+ " ), " + "UNIQUE (" + ORGANIZE_COURSE_ID + ", "
 				+ ORGANIZE_STATION_NUMBER + " )" + " )";
-		
-		
+	
 		db.execSQL(createCompetitorTable);
+		db.execSQL(createStandingTable);
+		db.execSQL(createResultTable);
 		db.execSQL(createCoursesTable);
 	}
 
@@ -70,6 +92,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("DROP TABLE IF EXISTS " + COMPETE_TABLE_NAME);
 		db.execSQL("DROP TABLE IF EXISTS " + ORGANIZE_TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + RESULT_TABLE_NAME);
 		onCreate(db);
 	}
 
@@ -272,7 +295,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 	 * Logi notar þessu föll
 	 */
 
-	// add a staion
+	// add a station
 	public void addStation(String name, long time, String qr, boolean check,
 			String gps) throws SQLException {
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -293,11 +316,19 @@ public class SQLHandler extends SQLiteOpenHelper {
 		db.close();
 	}
 
+
 	// Delete all stations
 	public void deleteAll() {
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete(COMPETE_TABLE_NAME, null, null);
 		db.close();
+	}
+	
+	// Delete all stations
+	public void deleteResults() {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.delete(RESULT_TABLE_NAME, null, null);
+			db.close();
 	}
 
 	// Get all values from the table
@@ -312,6 +343,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 				ArrayList<String> station = new ArrayList<String>();
 				station.add(cursor.getString(0));
 				station.add(Long.toString(cursor.getLong(1)));
+				station.add(cursor.getString(2));
 				station.add(cursor.getString(3));
 				station.add(cursor.getString(4));
 				results.add(station);
@@ -335,5 +367,118 @@ public class SQLHandler extends SQLiteOpenHelper {
 		db.close();
 		return icount;
 	}
+	
+	// Add to results table. 
+	public void addResult(String name, long time, String qr, boolean check,
+			String gps, String competitor) throws SQLException {
+		SQLiteDatabase db = this.getWritableDatabase();
+		// generate and send command
+		ContentValues values = new ContentValues();
+		try {			
+			values.put(COMPETE_STATION_NAME, name);
+			values.put(COMPETE_STATION_TIME, time);
+			values.put(COMPETE_QR_VALUE, qr);
+			values.put(COMPETE_TIME_CHECK, check);
+			values.put(COMPETE_GPS_LOCATION, gps);
+			values.put(RESULT_COMPETITOR_NAME, competitor);			
+		} catch (Exception e) {
+
+		}
+		db.insert(RESULT_TABLE_NAME, null, values);
+		db.close();
+	}
+	
+	// Get all current results
+	public ArrayList<ArrayList<String>> getAllResults() {
+
+		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery("SELECT * FROM " + RESULT_TABLE_NAME
+				+ " ORDER BY " + COMPETE_STATION_TIME, null);
+		if (cursor.moveToFirst()) {
+			do {
+				ArrayList<String> station = new ArrayList<String>();
+				station.add(cursor.getString(0));
+				station.add(Long.toString(cursor.getLong(1)));
+				station.add(cursor.getString(2));
+				station.add(cursor.getString(3));
+				station.add(cursor.getString(4));
+				station.add(cursor.getString(5));
+				results.add(station);
+			} while (cursor.moveToNext());
+
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		db.close();
+		return results;
+	}
+
+	// Get results for a competitor
+	public ArrayList<ArrayList<String>> getResultsForCompetitor(String name) {
+
+		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery("SELECT * FROM " + RESULT_TABLE_NAME
+				+ " WHERE " + RESULT_COMPETITOR_NAME +" = '" + name + "' ORDER BY " + COMPETE_STATION_TIME, null);
+		if (cursor.moveToFirst()) {
+			do {
+				ArrayList<String> station = new ArrayList<String>();
+				station.add(cursor.getString(0));
+				station.add(Long.toString(cursor.getLong(1)));
+				station.add(cursor.getString(2));
+				station.add(cursor.getString(3));
+				station.add(cursor.getString(4));
+				station.add(cursor.getString(5));
+				results.add(station);
+			} while (cursor.moveToNext());
+
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		db.close();
+		return results;
+	}
+	
+	// Add to final standing table
+	public void addStanding(String name, String time) throws SQLException {
+		SQLiteDatabase db = this.getWritableDatabase();
+		// generate and send command
+		ContentValues values = new ContentValues();
+		try {			
+			values.put(RESULT_COMPETITOR_NAME, name);
+			values.put(TOTAL_TIME, time);		
+		} catch (Exception e) {
+
+		}
+		db.insert(STANDING_TABLE_NAME, null, values);
+		db.close();
+	}
+	
+	// Get all current results
+	public ArrayList<ArrayList<String>> getAllStandings() {
+
+		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery("SELECT * FROM " + STANDING_TABLE_NAME
+				+ " ORDER BY " + TOTAL_TIME, null);
+		if (cursor.moveToFirst()) {
+			do {
+				ArrayList<String> station = new ArrayList<String>();
+				station.add(cursor.getString(0));	
+				station.add(cursor.getString(1));
+				results.add(station);
+			} while (cursor.moveToNext());
+
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		db.close();
+		return results;
+	}
+	
 
 }
