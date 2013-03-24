@@ -28,7 +28,7 @@ public class OrganizeModifyActivity extends Activity {
 	EditText stationNameField;
 	EditText courseNameField;
 	String courseName = "";
-	ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
+	public ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
 	//int stationNumber = 1;
 	int courseID = -1;
 	
@@ -36,9 +36,9 @@ public class OrganizeModifyActivity extends Activity {
 	public void onBackPressed() {
 	    new AlertDialog.Builder(this)
 	        .setIcon(android.R.drawable.ic_dialog_alert)
-	        .setTitle("Closing Activity")
-	        .setMessage("Are you sure you want to close this activity?")
-	        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+	        .setTitle("Loka glugga")
+	        .setMessage("Ert þú viss um að þú viljir hætta? Allar óvistaðar breytingar munu fyrnast")
+	        .setPositiveButton("já", new DialogInterface.OnClickListener()
 	    {
 	        
 	        public void onClick(DialogInterface dialog, int which) {
@@ -46,7 +46,7 @@ public class OrganizeModifyActivity extends Activity {
 	        }
 
 	    })
-	    .setNegativeButton("No", null)
+	    .setNegativeButton("Nei", null)
 	    .show();
 	}
 
@@ -172,11 +172,37 @@ public class OrganizeModifyActivity extends Activity {
 		}
 		return num;
 	}
+	
+	//add in a new station
+	public void addStation(String stationID, String name,
+			String number, String courseID, String courseName, 
+			String QR, String GPS ){
+		ArrayList<String> tempStation = new ArrayList<String>();
+		//add station ID NOTE: this value never needs to be read for new values,
+		// so we just set it to -1 to save time
+		tempStation.add(stationID);
+		// add station name
+		tempStation.add(name);
+		// add station number
+		tempStation.add(number);
+		//add course ID
+		tempStation.add(courseID);
+		//add course name
+		tempStation.add(courseName);
+		// add QR code
+		tempStation.add(QR);
+		// add GPS
+		// TODO: add working gps!
+		tempStation.add(GPS);
+		stationList.add(tempStation);
+		TableLayout vg = (TableLayout) findViewById(R.id.Create_Station_Table);
+		vg.removeAllViews();
+		// redraw table
+		this.fillTable();
+	}
 
 	// QR Scan result
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		ArrayList<String> tempStation = new ArrayList<String>();
-
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, intent);
 		int stationNumber = getNextStation();
@@ -186,45 +212,17 @@ public class OrganizeModifyActivity extends Activity {
 					.show();
 			// write to db
 			if (stationNameField.getText().toString() != null) {
-				//add station ID NOTE: this value never needs to be read for new values,
-				// so we just set it to -1 to save time
-				tempStation.add(String.valueOf(-1));
-				// add station name
-				tempStation.add(stationNameField.getText().toString());
-				// add station number
-				tempStation.add(String.valueOf(stationNumber));
-				//add course ID
-				tempStation.add(String.valueOf(courseID));
-				//add course name
-				tempStation.add(String.valueOf(courseName));
-				// add QR code
-				tempStation.add(String.valueOf(scanResult.getContents()));
-				// add GPS
-				// TODO: add working gps!
-				tempStation.add("12345");
+				this.addStation(String.valueOf(-1), stationNameField.getText().toString(),
+						String.valueOf(stationNumber), String.valueOf(courseID),
+						String.valueOf(courseName), String.valueOf(scanResult.getContents()),
+						"12345");
 			} else {
-				//add station ID NOTE: this value never needs to be read for new values,
-				// so we just set it to -1 to save time
-				tempStation.add(String.valueOf(-1));
-				// add station name
-				tempStation.add("Stöð nr. " + stationNumber);
-				// add station number
-				tempStation.add(String.valueOf(stationNumber));
-				//add course ID
-				tempStation.add(String.valueOf(courseID));
-				//add course name
-				tempStation.add(String.valueOf(courseName));
-				// add QR code
-				tempStation.add(String.valueOf(scanResult.getContents()));
-				// add GPS
-				// TODO: add working gps!
-				tempStation.add("12345");
+				this.addStation(String.valueOf(-1), "Stöð nr. " + stationNumber,
+						String.valueOf(stationNumber), String.valueOf(courseID),
+						String.valueOf(courseName), String.valueOf(scanResult.getContents()),
+						"12345");
 			}
-			stationList.add(tempStation);
-			TableLayout vg = (TableLayout) findViewById(R.id.Create_Station_Table);
-			vg.removeAllViews();
-			// redraw table
-			this.fillTable();
+
 		} else {
 			Toast.makeText(this, "No scan", Toast.LENGTH_SHORT).show();
 		}
