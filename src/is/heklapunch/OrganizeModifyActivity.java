@@ -29,38 +29,37 @@ public class OrganizeModifyActivity extends Activity {
 	EditText courseNameField;
 	String courseName = "";
 	public ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
-	//int stationNumber = 1;
+	// int stationNumber = 1;
 	int courseID = -1;
-	
+
 	@Override
 	public void onBackPressed() {
-	    new AlertDialog.Builder(this)
-	        .setIcon(android.R.drawable.ic_dialog_alert)
-	        .setTitle("Loka glugga")
-	        .setMessage("Ert þú viss um að þú viljir hætta? Allar óvistaðar breytingar munu fyrnast")
-	        .setPositiveButton("já", new DialogInterface.OnClickListener()
-	    {
-	        
-	        public void onClick(DialogInterface dialog, int which) {
-	            finish();    
-	        }
+		new AlertDialog.Builder(this)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setTitle("Loka glugga")
+				.setMessage(
+						"Ert þú viss um að þú viljir hætta? Allar óvistaðar breytingar munu fyrnast")
+				.setPositiveButton("já", new DialogInterface.OnClickListener() {
 
-	    })
-	    .setNegativeButton("Nei", null)
-	    .show();
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+
+				}).setNegativeButton("Nei", null).show();
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_organize_modify);
-		
+
 		// create database object
 		handler = new SQLHandler(this);
 		courseNameField = (EditText) findViewById(R.id.editTextCourseName);
 		stationNameField = (EditText) findViewById(R.id.EditTextStationName);
-		
-		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+		getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		courseNameField.setImeOptions(EditorInfo.IME_ACTION_DONE);
 		stationNameField.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
@@ -69,25 +68,27 @@ public class OrganizeModifyActivity extends Activity {
 		if (b.containsKey("courseID")) {
 			courseID = b.getInt("courseID");
 		}
-		//if we are given a courseID to modify, open it for editing, if it exists
-		if(courseID != -1 && handler.checkCoursebyID(courseID)){
+
+		// if we are given a courseID to modify, open it for editing, if it
+		// exists
+		if (courseID != -1 && handler.checkCoursebyID(courseID)) {
 			stationList = handler.getCoursebyID(courseID);
-			//find the course name
+			// find the course name
 			CourseData[] courseIDs = handler.getCourseIDs();
-			for(int i =0; i < courseIDs.length; i++){
-				if(Integer.valueOf(courseIDs[i].getValue()) == courseID){
+			for (int i = 0; i < courseIDs.length; i++) {
+				if (Integer.valueOf(courseIDs[i].getValue()) == courseID) {
 					courseName = handler.getCourseIDs()[i].getSpinnerText();
 					break;
 				}
 			}
-			//place course name in course name field
+			// place course name in course name field
 			courseNameField.setText(courseName);
 		}
-		//create a new course ID if needed
-		else{
+		// create a new course ID if needed
+		else {
 			courseID = handler.getMaxCourseID() + 1;
 		}
-		
+
 		// make table
 		station_table = (TableLayout) findViewById(R.id.Create_Station_Table);
 		this.fillTable();
@@ -103,10 +104,11 @@ public class OrganizeModifyActivity extends Activity {
 		// Converting to dip unit
 		int dip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
 				(float) 1, getResources().getDisplayMetrics());
-		
-		/*if(stationNameField.getText() != null){
-			stationName = stationNameField.getText().toString();
-		}*/
+
+		/*
+		 * if(stationNameField.getText() != null){ stationName =
+		 * stationNameField.getText().toString(); }
+		 */
 
 		Iterator<ArrayList<String>> i = stationList.iterator();
 
@@ -160,10 +162,10 @@ public class OrganizeModifyActivity extends Activity {
 		IntentIntegrator integrator = new IntentIntegrator(this);
 		integrator.initiateScan();
 	}
-	
-	//get highest station number in the station number list
-	public int getNextStation(){
-		//we start the stations at 30, dunno why....
+
+	// get highest station number in the station number list
+	public int getNextStation() {
+		// we start the stations at 30, dunno why....
 		int num = 30;
 		Iterator<ArrayList<String>> i = stationList.iterator();
 		while (i.hasNext()) {
@@ -172,22 +174,22 @@ public class OrganizeModifyActivity extends Activity {
 		}
 		return num;
 	}
-	
-	//add in a new station
-	public void addStation(String stationID, String name,
-			String number, String courseID, String courseName, 
-			String QR, String GPS ){
+
+	// add in a new station
+	public void addStation(String stationID, String name, String number,
+			String courseID, String courseName, String QR, String GPS) {
 		ArrayList<String> tempStation = new ArrayList<String>();
-		//add station ID NOTE: this value never needs to be read for new values,
+		// add station ID NOTE: this value never needs to be read for new
+		// values,
 		// so we just set it to -1 to save time
 		tempStation.add(stationID);
 		// add station name
 		tempStation.add(name);
 		// add station number
 		tempStation.add(number);
-		//add course ID
+		// add course ID
 		tempStation.add(courseID);
-		//add course name
+		// add course name
 		tempStation.add(courseName);
 		// add QR code
 		tempStation.add(QR);
@@ -212,15 +214,16 @@ public class OrganizeModifyActivity extends Activity {
 					.show();
 			// write to db
 			if (stationNameField.getText().toString() != null) {
-				this.addStation(String.valueOf(-1), stationNameField.getText().toString(),
-						String.valueOf(stationNumber), String.valueOf(courseID),
-						String.valueOf(courseName), String.valueOf(scanResult.getContents()),
-						"12345");
+				this.addStation(String.valueOf(-1), stationNameField.getText()
+						.toString(), String.valueOf(stationNumber), String
+						.valueOf(courseID), String.valueOf(courseName), String
+						.valueOf(scanResult.getContents()), "12345");
 			} else {
-				this.addStation(String.valueOf(-1), "Stöð nr. " + stationNumber,
-						String.valueOf(stationNumber), String.valueOf(courseID),
-						String.valueOf(courseName), String.valueOf(scanResult.getContents()),
-						"12345");
+				this.addStation(String.valueOf(-1),
+						"Stöð nr. " + stationNumber,
+						String.valueOf(stationNumber),
+						String.valueOf(courseID), String.valueOf(courseName),
+						String.valueOf(scanResult.getContents()), "12345");
 			}
 
 		} else {
