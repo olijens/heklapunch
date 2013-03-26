@@ -47,15 +47,14 @@ public class OrganizeModifyActivityTest extends
 	// the method getNextStation() should return the current number of stations
 	// +30
 	public void testNextStation() {
-		assertTrue(mnActivity!= null);
+		assertTrue(mnActivity.getNextStation() == 30);
 
 	}
 
 	// test the addStation() method. first station should be present at the
 	// start of stationList after adding more than one station
 	public void testAddStation() {
-		assertTrue(1 == 1);
-		/*String testSID = "-1";
+		String testSID = "-1";
 		String testname = "station one";
 		String testSNumber = String.valueOf(mnActivity.getNextStation());
 		String testCID = "1";
@@ -88,7 +87,7 @@ public class OrganizeModifyActivityTest extends
 		assertTrue(entry.get(1) != testname2);
 		assertTrue(entry.get(2) != testSNumber2);
 		assertTrue(entry.get(5) == testQR);
-		assertTrue(entry.get(6) == testGPS);*/
+		assertTrue(entry.get(6) == testGPS);
 
 	}
 }

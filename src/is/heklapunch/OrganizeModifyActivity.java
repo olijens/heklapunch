@@ -197,10 +197,6 @@ public class OrganizeModifyActivity extends Activity {
 		// TODO: add working gps!
 		tempStation.add(GPS);
 		stationList.add(tempStation);
-		TableLayout vg = (TableLayout) findViewById(R.id.Create_Station_Table);
-		vg.removeAllViews();
-		// redraw table
-		this.fillTable();
 	}
 
 	// QR Scan result
@@ -225,6 +221,10 @@ public class OrganizeModifyActivity extends Activity {
 						String.valueOf(courseID), String.valueOf(courseName),
 						String.valueOf(scanResult.getContents()), "12345");
 			}
+			TableLayout vg = (TableLayout) findViewById(R.id.Create_Station_Table);
+			vg.removeAllViews();
+			// redraw table
+			this.fillTable();
 
 		} else {
 			Toast.makeText(this, "No scan", Toast.LENGTH_SHORT).show();
