@@ -2,18 +2,14 @@ package is.heklapunch;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -24,7 +20,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -39,6 +34,7 @@ public class OrganizeActivity extends Activity {
 	Spinner courseSpinner;
 	Button editButton;
 	Button deleteButton;
+	Button adminButton;
 	public CourseData[] courses;
 
 	@Override
@@ -47,6 +43,7 @@ public class OrganizeActivity extends Activity {
 		setContentView(R.layout.activity_organize);
 		editButton = (Button) findViewById(R.id.edit_button);
 		deleteButton = (Button) findViewById(R.id.delete_button);
+		adminButton = (Button) findViewById(R.id.admin_button);
 
 		// create database object
 		handler = new SQLHandler(this);
@@ -58,6 +55,7 @@ public class OrganizeActivity extends Activity {
 	public void populateSpinner(){
 		editButton.setEnabled(false);
 		deleteButton.setEnabled(false);
+		adminButton.setEnabled(false);
 		courses = handler.getCourseIDs();
 		if (courses != null) {
 			courseSpinner = (Spinner) findViewById(R.id.spinner1);
@@ -82,6 +80,7 @@ public class OrganizeActivity extends Activity {
 			{
 				editButton.setEnabled(true);
 				deleteButton.setEnabled(true);
+				adminButton.setEnabled(true);
 			}
 		}
 	}
@@ -96,7 +95,7 @@ public class OrganizeActivity extends Activity {
 	}
 
 	// Go to recieve mode
-	public void receive(View view) {
+	public void administer(View view) {
 		Intent r = new Intent(this, OrganizeReceiveActivity.class);
 		startActivity(r);
 	}
