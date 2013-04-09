@@ -9,6 +9,7 @@
     <string name="organize_button">Umsjón</string>
     <string name="organize_efst">Umsjón</string>
     <string name="organize_new_track_button">Gera nýja braut</string>
+    <string name="organize_manage_race">Stýra keppni</string>
     <string name="organize_receive_data_button">Taka á móti gögnum</string>
     <string name="organize_courses_button">Umsýsla brauta</string>
     <string name="organize_modify_data_button">Breyta braut</string>
@@ -31,6 +32,7 @@
     <string name="title_activity_blue_tooth">BlueToothActivity</string>
     <string name="saved_name">Nafn keppanda:</string>
     <string name="delete_result">Eyða gögnum</string>
+    <string name="delete_course">Eyða braut</string>
     
         <!--  DeviceListActivity -->
     <string name="scanning">scanning for devices...</string>

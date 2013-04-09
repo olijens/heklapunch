@@ -4,20 +4,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="45dip"
-        android:gravity="center"
-        android:text="@string/organize_efst"
-        android:textSize="24sp" />
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="50dip"
+        android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dip"
         android:layout_marginRight="20dip"
-        android:onClick="create"
-        android:text="@string/organize_courses_button" />
+        android:layout_marginTop="20dp"
+        android:onClick="createCourse"
+        android:text="@string/organize_new_track_button" />
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:layout_marginTop="20dp" />
 
     <Button
         android:layout_width="match_parent"
@@ -25,28 +28,10 @@
         android:layout_marginLeft="20dip"
         android:layout_marginRight="20dip"
         android:onClick="receive"
-        android:text="@string/organize_receive_data_button" />
-     <ScrollView
-        android:id="@+id/ScrollView_receive"
-        android:layout_width="match_parent"
-        android:layout_height="200dip"
-        android:fillViewport="true" >
+        android:text="@string/organize_manage_race" />
 
-        <TableLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/receive_table"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dip"
-            android:layout_marginRight="20dip" >
-        </TableLayout>
-    </ScrollView>
-      <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip"
-        android:onClick="delete_results"
-        android:text="@string/delete_result" />
+    <Button android:id="@+id/edit_button" android:layout_width="match_parent" android:layout_height="50dip" android:layout_marginLeft="20dip" android:layout_marginRight="20dip" android:onClick="modifyCourse" android:text="@string/organize_modify_data_button"/>
+
+    <Button android:id="@+id/delete_button" android:layout_width="match_parent" android:layout_height="50dip" android:layout_marginLeft="20dip" android:layout_marginRight="20dip" android:onClick="deleteCourse" android:text="@string/delete_course"/>
 
 </LinearLayout>

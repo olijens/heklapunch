@@ -29,7 +29,6 @@ public class OrganizeModifyActivity extends Activity {
 	EditText courseNameField;
 	String courseName = "";
 	public ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
-	// int stationNumber = 1;
 	int courseID = -1;
 
 	@Override
