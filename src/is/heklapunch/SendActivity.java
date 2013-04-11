@@ -3,9 +3,7 @@ package is.heklapunch;
 import is.heklapunch.bluetooth.BlueToothClient;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;

@@ -6,7 +6,6 @@
 
 package is.heklapunch;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +37,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -48,23 +48,46 @@ import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-
 public class KeppaActivity extends Activity {
-	
+
 	TableLayout station_table;
 	SQLHandler handler;
 	long time;
 	EditText editBox;
-	boolean isTimeChecked; 
-	
+	boolean isTimeChecked;
+	TextView brautTitle;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_keppa);
-		//Set time object
-		if(isOnline()){				
-			
-			//Use json service http://json-time.appspot.com/time.json?tz=GMT
+
+		// create database object
+		handler = new SQLHandler(this);
+		
+		// get name box
+		editBox = (EditText) findViewById(R.id.saved_name);
+		
+		// Setjum hvaða braut er active
+		brautTitle = (TextView) findViewById(R.id.keppa_valin_braut);
+		brautTitle.setText("Valin braut: FIXME");
+		
+		// Set time object
+		this.fillTime();
+
+		// make table
+		station_table = (TableLayout) findViewById(R.id.station_table);
+		this.fillTable();
+	}
+
+	/**
+	 * Setur upp tengingu við tímaþjón
+	 * */
+	protected void fillTime() {
+		// Set time object
+		if (isOnline()) {
+
+			// Use json service http://json-time.appspot.com/time.json?tz=GMT
 			@SuppressLint("NewApi")
 			class GetTimeFromServer extends AsyncTask<String, Void, String> {
 
@@ -104,11 +127,14 @@ public class KeppaActivity extends Activity {
 							} catch (IOException e) {
 							}
 							response = sb.toString();
-							Log.v("tester", "hér er response size: " + response.length());
+							Log.v("tester",
+									"hér er response size: "
+											+ response.length());
 							instream.close();
 						}
 					} catch (Exception e) {
-						Log.v("tester", "villa í execute request: " + e.toString());
+						Log.v("tester",
+								"villa í execute request: " + e.toString());
 					}
 
 					return response;
@@ -120,47 +146,33 @@ public class KeppaActivity extends Activity {
 					activity.setTime(result);
 				}
 			}// inner class end
-		
-			//run inner class and correct the time of the app
+				// run inner class and correct the time of the app
 			GetTimeFromServer task = new GetTimeFromServer(this);
-			//set the time object
-			task.execute(new String[] { "http://date.jsontest.com/" });					
+			// set the time object
+			task.execute(new String[] { "http://date.jsontest.com/" });
 			isTimeChecked = true;
-		}
-		else {
-			time = System.currentTimeMillis(); 
+		} else {
+			time = System.currentTimeMillis();
 			isTimeChecked = false;
 		}
-		
-		
-		//create database object
-		handler = new SQLHandler(this);	
-		//get name box
-		editBox =(EditText)findViewById(R.id.saved_name);
-		
-		//make table
-		station_table=(TableLayout)findViewById(R.id.station_table);
-		this.fillTable();
-		
-		
 	}
-	
-	//fill table with content
+
+	// fill table with content
 	@SuppressLint("NewApi")
-	public void fillTable() {		
-	
+	public void fillTable() {
+
 		TableRow row;
 		TextView t1, t2, t3;
-		//Converting to dip unit
-		
-		ArrayList<ArrayList<String>> results =  handler.getAllStations();
-		
+		// Converting to dip unit
+
+		ArrayList<ArrayList<String>> results = handler.getAllStations();
+
 		Iterator<ArrayList<String>> i = results.iterator();
 
-		while(i.hasNext()) {
-			
+		while (i.hasNext()) {
+
 			ArrayList<?> entry = i.next();
-			
+
 			row = new TableRow(this);
 
 			t1 = new TextView(this);
@@ -168,17 +180,18 @@ public class KeppaActivity extends Activity {
 			t3 = new TextView(this);
 
 			t1.setText(entry.get(3).toString());
-			
-			//fix date
+
+			// fix date
 			String longV = entry.get(1).toString();
 			long millisecond = Long.parseLong(longV);
-			String dateString = DateFormat.format("kk:mm:ss", new Date(millisecond)).toString();
+			String dateString = DateFormat.format("kk:mm:ss",
+					new Date(millisecond)).toString();
 			t2.setText(dateString);
-			
+
 			t3.setText(entry.get(4).toString());
 
 			t1.setTypeface(null, 1);
-			//t1.setWidth(130);
+			// t1.setWidth(130);
 			t2.setTypeface(null, 1);
 			t2.setWidth(146);
 			t3.setTypeface(null, 1);
@@ -201,55 +214,68 @@ public class KeppaActivity extends Activity {
 	}
 
 	// Go to organize mode
-	public void send_info(View view) {
-		if(!this.editBox.getText().toString().equals("")) {
+	public void send_info_bt(View view) {
+		if (!this.editBox.getText().toString().equals("")) {
 			Intent o = new Intent(this, SendActivity.class);
 			startActivity(o);
-		}
-		else {
-			Toast.makeText(this, "Nafn keppanda er nauðsynlegt", Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(this, "Nafn keppanda er nauðsynlegt",
+					Toast.LENGTH_SHORT).show();
 		}
 	}
-	
+
+	public void send_info_json(View view) {
+		if (!this.editBox.getText().toString().equals("")) {
+			Intent o = new Intent(this, SendJSONActivity.class);
+			startActivity(o);
+		} else {
+			Toast.makeText(this, "Nafn keppanda er nauðsynlegt",
+					Toast.LENGTH_SHORT).show();
+		}
+	}
+
 	// Go to organize mode
 	public void read_qr(View view) {
 		IntentIntegrator integrator = new IntentIntegrator(this);
 		integrator.initiateScan();
 	}
-	
+
 	// Delete all stations from the view and db
 	public void delete(View view) {
 		handler.deleteAll();
-		//redraw view
-		TableLayout vg = (TableLayout) findViewById (R.id.station_table);
+		// redraw view
+		TableLayout vg = (TableLayout) findViewById(R.id.station_table);
 		vg.removeAllViews();
 	}
 
 	// QR Scan result
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		
-		boolean isTimeChecked = false;
-		IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);		
-		if (scanResult != null && scanResult.getContents().length() != 0) {
-			// handle scan result
-			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT).show();		
-			//Set time object
-			time = System.currentTimeMillis();
-				
-		
-			//write to db			
-			handler.addStation("Stöð " + Integer.toString(handler.count()+30),time,scanResult.getContents(), isTimeChecked, this.getGPS());
-			//redraw view
-			TableLayout vg = (TableLayout) findViewById (R.id.station_table);
-			vg.removeAllViews();
-			//redraw table
-			this.fillTable();			
-		} 
-		else {
-			Toast.makeText(this, "No scan", Toast.LENGTH_SHORT).show();
+		if (requestCode != 44) {
+			boolean isTimeChecked = false;
+			IntentResult scanResult = IntentIntegrator.parseActivityResult(
+					requestCode, resultCode, intent);
+			if (scanResult != null && scanResult.getContents().length() != 0) {
+				// handle scan result
+				Toast.makeText(this, scanResult.getContents(),
+						Toast.LENGTH_SHORT).show();
+				// Set time object
+				time = System.currentTimeMillis();
+
+				// write to db
+				handler.addStation(
+						"Stöð " + Integer.toString(handler.count() + 30), time,
+						scanResult.getContents(), isTimeChecked, this.getGPS());
+				// redraw view
+				TableLayout vg = (TableLayout) findViewById(R.id.station_table);
+				vg.removeAllViews();
+				// redraw table
+				this.fillTable();
+			} else {
+				Toast.makeText(this, "No scan", Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
-	
+
 	// get gps points from last known location
 	private String getGPS() {
 
@@ -264,11 +290,11 @@ public class KeppaActivity extends Activity {
 				break;
 		}
 
-		//double[] gps = new double[2];
+		// double[] gps = new double[2];
 		String loc = "null";
 		if (l != null) {
 			loc = "";
-			//Log.d("Loga gps test", "Location not null");
+			// Log.d("Loga gps test", "Location not null");
 			Log.d("Loga gps test", Double.toString(l.getLatitude()));
 			loc = loc + Double.toString(l.getLatitude());
 			loc = loc + Double.toString(l.getLongitude());
@@ -277,57 +303,58 @@ public class KeppaActivity extends Activity {
 	}
 
 	/*
-	 * Check if we are online
-	 * <jtm@hi.is>
-	 * */
+	 * Check if we are online <jtm@hi.is>
+	 */
 	public boolean isOnline() {
-	    ConnectivityManager cm =
-	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
-	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-	        return true;
-	    }
-	    return false;
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+			return true;
+		}
+		return false;
 	}
-	
+
 	/*
-	 * Set correct time by using a string from json service
-	 * <logip@hi.is>
-	 * */
+	 * Set correct time by using a string from json service <logip@hi.is>
+	 */
 	public void setTime(String json) {
 		Gson gson = new Gson();
 		TimeItemResult jsonResult = gson.fromJson(json, TimeItemResult.class);
 		Log.d("Loga time test", "Setting time with internet");
-		//Calendar c = Calendar.getInstance();
-		//Phone date used but time taken from server
-		//c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), jsonResult.hour, jsonResult.minute, jsonResult.second);
-		this.time =  jsonResult.milliseconds_since_epoch;  
+		// Calendar c = Calendar.getInstance();
+		// Phone date used but time taken from server
+		// c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+		// c.get(Calendar.DAY_OF_MONTH), jsonResult.hour, jsonResult.minute,
+		// jsonResult.second);
+		this.time = jsonResult.milliseconds_since_epoch;
 	}
-	
-	  protected void onResume() {
-	        super.onResume();
-	        SharedPreferences prefs = this.getSharedPreferences("competitor_name", Context.MODE_PRIVATE);
 
-	        String restoredText = prefs.getString("competitor_name", null);
-	        if (restoredText != null) {
-	            editBox.setText(restoredText, TextView.BufferType.EDITABLE);
-	 
-	            int selectionStart = prefs.getInt("selection-start", -1);
-	            int selectionEnd = prefs.getInt("selection-end", -1);
-	            if (selectionStart != -1 && selectionEnd != -1) {
-	                editBox.setSelection(selectionStart, selectionEnd);
-	            }
-	        }
-	    }
-	 
-	    protected void onPause() {
-	        super.onPause();
-	        SharedPreferences prefs = this.getSharedPreferences("competitor_name", Context.MODE_PRIVATE);
-	        SharedPreferences.Editor editor = prefs.edit();
-	        editor.putString("competitor_name", editBox.getText().toString());
-	        editor.putInt("selection-start", editBox.getSelectionStart());
-	        editor.putInt("selection-end", editBox.getSelectionEnd());
-	        editor.commit();
-	    }
-		
+	protected void onResume() {
+		super.onResume();
+		SharedPreferences prefs = this.getSharedPreferences("competitor_name",
+				Context.MODE_PRIVATE);
+
+		String restoredText = prefs.getString("competitor_name", null);
+		if (restoredText != null) {
+			editBox.setText(restoredText, TextView.BufferType.EDITABLE);
+
+			int selectionStart = prefs.getInt("selection-start", -1);
+			int selectionEnd = prefs.getInt("selection-end", -1);
+			if (selectionStart != -1 && selectionEnd != -1) {
+				editBox.setSelection(selectionStart, selectionEnd);
+			}
+		}
+	}
+
+	protected void onPause() {
+		super.onPause();
+		SharedPreferences prefs = this.getSharedPreferences("competitor_name",
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString("competitor_name", editBox.getText().toString());
+		editor.putInt("selection-start", editBox.getSelectionStart());
+		editor.putInt("selection-end", editBox.getSelectionEnd());
+		editor.commit();
+	}
+
 }

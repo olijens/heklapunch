@@ -15,6 +15,14 @@
         android:gravity="center"
         android:text="@string/keppa_efst"
         android:textSize="24sp" />
+    
+    <TextView
+        android:id="@+id/keppa_valin_braut"
+        android:layout_width="fill_parent"
+        android:layout_height="45dip"
+        android:gravity="center"
+        android:text=""
+        android:textSize="16sp" />
 	
     <LinearLayout 
         android:focusable="true"
@@ -56,8 +64,17 @@
         android:layout_height="50dip"
         android:layout_marginLeft="20dip"
         android:layout_marginRight="20dip"
-        android:onClick="send_info"
+        android:onClick="send_info_bt"
         android:text="@string/senda_keppandi" />
+    
+    <Button
+        android:id="@+id/keppa_send_json"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:onClick="send_info_json"
+        android:text="@string/senda_json" />
 
     <Button
         android:layout_width="match_parent"

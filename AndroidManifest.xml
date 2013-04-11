@@ -61,6 +61,10 @@
             android:name="is.heklapunch.SendActivity"
             android:label="@string/title_activity_send" >
         </activity>
+         <activity
+            android:name="is.heklapunch.SendJSONActivity"
+            android:label="@string/title_activity_send_json" >
+        </activity>
         <activity
             android:name="is.heklapunch.BlueToothActivity"
             android:label="@string/title_activity_blue_tooth" >
