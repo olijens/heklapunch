@@ -35,6 +35,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
@@ -53,7 +55,6 @@ public class KeppaActivity extends Activity {
 	TableLayout station_table;
 	SQLHandler handler;
 	long time;
-	EditText editBox;
 	boolean isTimeChecked;
 	TextView brautTitle;
 
@@ -65,12 +66,9 @@ public class KeppaActivity extends Activity {
 		// create database object
 		handler = new SQLHandler(this);
 		
-		// get name box
-		editBox = (EditText) findViewById(R.id.saved_name);
-		
 		// Setjum hvaða braut er active
-		brautTitle = (TextView) findViewById(R.id.keppa_valin_braut);
-		brautTitle.setText("Valin braut: FIXME");
+		//brautTitle = (TextView) findViewById(R.id.keppa_valin_braut);
+		//brautTitle.setText("Valin braut: FIXME");
 		
 		// Set time object
 		this.fillTime();
@@ -168,7 +166,36 @@ public class KeppaActivity extends Activity {
 		ArrayList<ArrayList<String>> results = handler.getAllStations();
 
 		Iterator<ArrayList<String>> i = results.iterator();
-
+		
+		//Make header for table
+		TextView h1, h2, h3;
+		row = new TableRow(this);
+		h1 = new TextView(this);
+		h2 = new TextView(this);
+		h3 = new TextView(this);
+		
+		h1.setText("Stöð");
+		h2.setText("Tími");
+		h3.setText("Millitími");
+		
+		h1.setTextSize(17);
+		h2.setTextSize(17);
+		h3.setTextSize(17);
+		
+		h1.setTextColor(Color.WHITE);
+		h2.setTextColor(Color.WHITE);
+		h3.setTextColor(Color.WHITE);
+		
+		row.addView(h1);
+		row.addView(h2);
+		row.addView(h3);
+		
+		station_table.addView(row, new TableLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		
+		Long temp = new Long("0");
+		
+		//make time rows
 		while (i.hasNext()) {
 
 			ArrayList<?> entry = i.next();
@@ -187,22 +214,35 @@ public class KeppaActivity extends Activity {
 			String dateString = DateFormat.format("kk:mm:ss",
 					new Date(millisecond)).toString();
 			t2.setText(dateString);
-
-			t3.setText(entry.get(4).toString());
+			//split time
+			Long milli = millisecond - temp;
+			//check for first entry
+			if(milli.equals(millisecond)){
+				milli =  new Long("0");
+			}
+			String dateString2 = DateFormat.format("kk:mm:ss",
+					new Date(milli)).toString();
+			t3.setText(dateString2);
+			//keep time
+			temp = millisecond;
 
 			t1.setTypeface(null, 1);
 			// t1.setWidth(130);
 			t2.setTypeface(null, 1);
-			t2.setWidth(146);
 			t3.setTypeface(null, 1);
 
 			t1.setTextSize(15);
 			t2.setTextSize(15);
 			t3.setTextSize(15);
+			
+			t1.setPadding(0, 0, 15, 0);
+			t2.setPadding(0, 0, 15, 0);
+			t3.setPadding(0, 0, 15, 0);
+			
 
-			t1.setTextColor(Color.BLUE);
-			t2.setTextColor(Color.RED);
-			t3.setTextColor(Color.DKGRAY);
+			t1.setTextColor(Color.WHITE);
+			t2.setTextColor(Color.GREEN);
+			t3.setTextColor(Color.RED);
 			row.addView(t1);
 			row.addView(t2);
 			row.addView(t3);
@@ -215,23 +255,14 @@ public class KeppaActivity extends Activity {
 
 	// Go to organize mode
 	public void send_info_bt(View view) {
-		if (!this.editBox.getText().toString().equals("")) {
 			Intent o = new Intent(this, SendActivity.class);
 			startActivity(o);
-		} else {
-			Toast.makeText(this, "Nafn keppanda er nauðsynlegt",
-					Toast.LENGTH_SHORT).show();
-		}
+		
 	}
 
 	public void send_info_json(View view) {
-		if (!this.editBox.getText().toString().equals("")) {
 			Intent o = new Intent(this, SendJSONActivity.class);
-			startActivity(o);
-		} else {
-			Toast.makeText(this, "Nafn keppanda er nauðsynlegt",
-					Toast.LENGTH_SHORT).show();
-		}
+		
 	}
 
 	// Go to organize mode
@@ -331,33 +362,31 @@ public class KeppaActivity extends Activity {
 		// jsonResult.second);
 		this.time = jsonResult.milliseconds_since_epoch;
 	}
-
-	protected void onResume() {
-		super.onResume();
-		SharedPreferences prefs = this.getSharedPreferences("competitor_name",
-				Context.MODE_PRIVATE);
-
-		String restoredText = prefs.getString("competitor_name", null);
-		if (restoredText != null) {
-			editBox.setText(restoredText, TextView.BufferType.EDITABLE);
-
-			int selectionStart = prefs.getInt("selection-start", -1);
-			int selectionEnd = prefs.getInt("selection-end", -1);
-			if (selectionStart != -1 && selectionEnd != -1) {
-				editBox.setSelection(selectionStart, selectionEnd);
-			}
-		}
-	}
-
-	protected void onPause() {
-		super.onPause();
-		SharedPreferences prefs = this.getSharedPreferences("competitor_name",
-				Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString("competitor_name", editBox.getText().toString());
-		editor.putInt("selection-start", editBox.getSelectionStart());
-		editor.putInt("selection-end", editBox.getSelectionEnd());
-		editor.commit();
-	}
+	
+	
+	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_keppa, menu);
+        return true;
+    }
+	
+	@Override
+    //Handle menu clicks
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.keppa_senda:
+               this.send_info_bt(this.getCurrentFocus());
+                return true;
+                
+            case R.id.keppa_henda:
+                delete(this.getCurrentFocus());
+                return true;
+                
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }

@@ -49,6 +49,11 @@
     <string name="secure_connect">Tengjast tæki - Örugg tenging</string>
     <string name="insecure_connect">Tengjast tæki - Opin tenging</string>
     <string name="discoverable">Gera sýnilegt</string>
+    
+     <!-- keppa Menu -->
+    <string name="keppa_senda">Senda hlaup</string>
+    <string name="keppa_hlada">Hlaða upp gögnum</string>
+    <string name="keppa_henda">Henda stöðvum</string>
 
     <string name="sending">Sendi gögn...</string>
     <string name="send">Senda</string>
