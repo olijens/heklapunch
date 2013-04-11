@@ -154,6 +154,7 @@ public class OrganizeModifyActivity extends Activity {
 			handler.addStation(courseTitle, courseID, stationTitle,
 					stationNumber, QRValue, GPSValue);
 		}
+		this.finish();
 	}
 
 	// Go to QR mode
@@ -202,26 +203,40 @@ public class OrganizeModifyActivity extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, intent);
-		int stationNumber = getNextStation();
+		
 		if (scanResult != null && scanResult.getContents().length() != 0) {
 			// handle scan result
 			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT)
 					.show();
-			// write to db
-			if (stationNameField.getText().toString() != null) {
-				this.addStation(String.valueOf(-1), stationNameField.getText()
-						.toString(), String.valueOf(stationNumber), String
-						.valueOf(courseID), String.valueOf(courseName), String
-						.valueOf(scanResult.getContents()), "12345");
-			} else {
-				this.addStation(String.valueOf(-1),
-						"Stöð nr. " + stationNumber,
-						String.valueOf(stationNumber),
-						String.valueOf(courseID), String.valueOf(courseName),
-						String.valueOf(scanResult.getContents()), "12345");
+			
+			String result = scanResult.getContents();
+			String[] stations = result.split(";");
+			String name = "";
+			String oname = "";
+			
+			// Leyfum yfirskrift
+			if(stations.length == 1) {
+				oname = stationNameField.getText().toString();
+				if(oname.length() > 0) stations[0] = oname;
 			}
+			
+			for(int i=0; i< stations.length; i++) {
+				name = stations[i];
+				this.addStation(
+					String.valueOf(-1),
+					name, 
+					String.valueOf(getNextStation()), 
+					String.valueOf(courseID), 
+					String.valueOf(courseName), 
+					name, 
+					"12345"
+				);
+			}
+			
+			// empty
 			TableLayout vg = (TableLayout) findViewById(R.id.Create_Station_Table);
 			vg.removeAllViews();
+			
 			// redraw table
 			this.fillTable();
 
