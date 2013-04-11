@@ -29,6 +29,7 @@ public class BlueToothMessageHandler extends Handler {
 	public static final int MESSAGE_WRITE = 3;
 	public static final int MESSAGE_DEVICE_NAME = 4;
 	public static final int MESSAGE_TOAST = 5;
+	public static final int MESSAGE_ERROR = 6;
 	
 	 // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -67,6 +68,9 @@ public class BlueToothMessageHandler extends Handler {
 			break;
 		case MESSAGE_WRITE:
 			_adapter.onMessageWrite(msg);
+			break;
+		case MESSAGE_ERROR:
+			_adapter.onMessageError(msg);
 			break;
 		case MESSAGE_READ:
 			_adapter.onMessageRead(msg);

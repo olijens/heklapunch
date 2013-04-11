@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.google.gson.GsonBuilder;
@@ -26,6 +27,11 @@ public class SendActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setContentView(R.layout.activity_send);
+		setProgressBarIndeterminateVisibility(true);
+		setTitle(R.string.sending);
 		
 		mClient = new BlueToothClient(this);
 		mClient.setDiscoverableTimeout(30);

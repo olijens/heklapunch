@@ -50,6 +50,7 @@
     <string name="insecure_connect">Tengjast tæki - Opin tenging</string>
     <string name="discoverable">Gera sýnilegt</string>
 
+    <string name="sending">Sendi gögn...</string>
     <string name="send">Senda</string>
     <string name="not_connected">Ekkert tæki er tengt</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>

@@ -133,6 +133,23 @@ public abstract class BlueToothBase {
 						+ msg.getData()
 								.getString(BlueToothMessageHandler.TOAST));
 	}
+	
+	/** 
+	 * Show Error as Toast
+	 * @param	Message
+	 * */
+	protected void onMessageError(Message msg) {
+		if (_caller != null) {
+			Toast.makeText(_caller.getApplicationContext(),
+					msg.getData().getString(BlueToothMessageHandler.TOAST),
+					Toast.LENGTH_SHORT).show();
+		}
+		Log.d(TAG,
+				"MESSAGE_ERROR: "
+						+ msg.getData()
+								.getString(BlueToothMessageHandler.TOAST));
+		_caller.finish();
+	}
 
 	/** 
 	 * Set timeout for device discoverability
@@ -440,6 +457,15 @@ public abstract class BlueToothBase {
                 	Log.e(TAG, "unable to close() socket during connection failure", e2);
                 }
                 Log.e(TAG, "socket failure " + mSocketType, e);
+                
+                // Share the sent message back to the UI Activity
+                Message msg = mHandler
+        				.obtainMessage(BlueToothMessageHandler.MESSAGE_ERROR);
+        		Bundle bundle = new Bundle();
+        		bundle.putString(BlueToothMessageHandler.TOAST,
+        				"Ekki náðist tenging við tæki");
+        		msg.setData(bundle);
+        		mHandler.sendMessage(msg);
                 return;
             }
 
