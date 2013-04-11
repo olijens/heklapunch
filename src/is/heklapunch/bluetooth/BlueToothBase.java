@@ -73,7 +73,25 @@ public abstract class BlueToothBase {
 	protected String mConnectedDeviceName;
 	public ConnectedThread mConnectedThread;
 	public ConnectThread mConnectThread;
-	protected boolean HTCWorkaround = true;
+	
+	/**
+	 * Athugar hvort HTC workaround skuli notað
+	 * @return boolean
+	 * */
+	protected boolean useHTCWorkaround() {
+		String manufacturer = android.os.Build.MANUFACTURER;
+        if (manufacturer.toLowerCase().contains("htc")) {
+            return true;
+        } else if(manufacturer.toLowerCase().contains("samsung")) {
+        	String brand = android.os.Build.BRAND;
+        	// Galaxy S series
+        	if(brand == "GT-I9300") return true;
+        	if(brand == "GT-I9200") return true;
+        	if(brand == "GT-I9100") return true;
+        	if(brand == "GT-I9000") return true;
+        } 
+        return false;
+	}
 
 	/**
 	 * Called on successfull connection
@@ -418,7 +436,7 @@ public abstract class BlueToothBase {
 			mSocketType = secure ? "Secure" : "Insecure";
 
 			// Get a BluetoothSocket for a connection with the given BluetoothDevice
-            if (HTCWorkaround) {
+            if (useHTCWorkaround()) {
             		Log.d(TAG, "Using HTCWorkaround");
 				try {
 					btsock = BlueToothInsecure.createRfcommSocketToServiceRecord(device, _uuid_insecure, true);
