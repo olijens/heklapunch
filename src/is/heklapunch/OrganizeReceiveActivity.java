@@ -2,6 +2,7 @@ package is.heklapunch;
 
 import is.heklapunch.bluetooth.BlueToothServer;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
@@ -18,6 +19,13 @@ public class OrganizeReceiveActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		//grabs the courses DATABASE id from the extras bundle
+		int courseID = -1;
+		Bundle b = getIntent().getExtras();
+		if (b.containsKey("courseID")) {
+			courseID = b.getInt("courseID");
+		}
 		
 		//
 		if (mServer == null) {

@@ -97,7 +97,11 @@ public class OrganizeActivity extends Activity {
 	// Go to recieve mode
 	public void administer(View view) {
 		Intent r = new Intent(this, OrganizeReceiveActivity.class);
+		Bundle b = new Bundle();
+		b.putInt("courseID", selectedCourseID);
+		r.putExtras(b);
 		startActivity(r);
+		finish();
 	}
 
 	// go to modifycourse activity with no course name
