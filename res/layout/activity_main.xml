@@ -1,7 +1,9 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
@@ -22,10 +24,4 @@
         android:onClick="organize"
         android:text="@string/organize_button" />
     
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:onClick="test_qr"
-        android:text="@string/testqr_button" />
-
 </LinearLayout>
