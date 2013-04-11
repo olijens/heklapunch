@@ -106,13 +106,13 @@ public class SendActivity extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (DEBUG)
 			Log.d(TAG, "onActivityResult " + resultCode);
+		if(resultCode == RESULT_CANCELED) {
+			finish();
+			return;
+		}
 		switch (requestCode) {
 		case BlueToothClient.REQUEST_MAKE_DISCOVERABLE:
-			if(resultCode == RESULT_CANCELED) {
-				finish();
-			} else {
-				startBTpairingIntent();
-			}
+			startBTpairingIntent();
 			break;
 		case BlueToothClient.REQUEST_CONNECT_DEVICE_SECURE:
 			if (DEBUG)

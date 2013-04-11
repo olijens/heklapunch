@@ -29,32 +29,32 @@
     <string name="title_activity_qr">QRActivity</string>
     <string name="testqr_button">Prófa QR</string>
     <string name="title_activity_send">SendActivity</string>
-    <string name="title_activity_send_json">SendJSONActivity</string>
+    <string name="title_activity_send_json">Senda gögn á vefþjón</string>
     <string name="send_data">Senda Gögn með Bluetooth</string>
-    <string name="title_activity_blue_tooth">BlueToothActivity</string>
+    <string name="title_activity_blue_tooth">Senda gögn með BlueTooth</string>
     <string name="saved_name">Nafn keppanda:</string>
     <string name="delete_result">Eyða gögnum</string>
     <string name="delete_course">Eyða braut</string>
     
         <!--  DeviceListActivity -->
-    <string name="scanning">scanning for devices...</string>
-    <string name="select_device">select a device to connect</string>
+    <string name="scanning">Leita að tækjum...</string>
+    <string name="select_device">Veldu tæki</string>
     <string name="none_paired">No devices have been paired</string>
-    <string name="none_found">No devices found</string>
-    <string name="title_paired_devices">Paired Devices</string>
-    <string name="title_other_devices">Other Available Devices</string>
-    <string name="button_scan">Scan for devices</string>
+    <string name="none_found">Engin tæki sýnileg</string>
+    <string name="title_paired_devices">Þekkt tæki (treyst)</string>
+    <string name="title_other_devices">Önnur þekkt tæki</string>
+    <string name="button_scan">Leita að tækjum</string>
 
     <!-- Options Menu -->
-    <string name="secure_connect">Connect a device - Secure</string>
-    <string name="insecure_connect">Connect a device - Insecure</string>
-    <string name="discoverable">Make discoverable</string>
+    <string name="secure_connect">Tengjast tæki - Örugg tenging</string>
+    <string name="insecure_connect">Tengjast tæki - Opin tenging</string>
+    <string name="discoverable">Gera sýnilegt</string>
 
-    <string name="send">Send</string>
-    <string name="not_connected">You are not connected to a device</string>
+    <string name="send">Senda</string>
+    <string name="not_connected">Ekkert tæki er tengt</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
-    <string name="title_connecting">connecting...</string>
-    <string name="title_connected_to">connected: </string>
-    <string name="title_not_connected">not connected</string>
+    <string name="title_connecting">tengist...</string>
+    <string name="title_connected_to">Tengt: </string>
+    <string name="title_not_connected">ekki tengt</string>
     
 </resources>
