@@ -8,7 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="45dip"
         android:gravity="center"
-        android:text="@string/organize_efst"
+        android:text="@string/organize_modify_data_efst"
         android:textSize="24sp" />
 
     <EditText
@@ -16,33 +16,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:maxLength="30"
-        android:hint="@string/organize_create_default_name" />
+        android:hint="@string/organize_create_default_name"
+        android:maxLength="30" />
 
-    <EditText
-        android:id="@+id/EditTextStationName"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:maxLength="30"
-        android:hint="@string/organize_create_station_default_name" />
+        android:layout_height="wrap_content" >
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip"
-        android:onClick="read_qr"
-        android:text="@string/organize_create_qr_read" />
-
-    <!--
         <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="testInsert"
-        android:text="Testinsert" />
-    -->
+            android:id="@+id/modify_add"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="read_qr"
+            android:text="@string/organize_create_qr_read" />
+
+        <Button
+            android:id="@+id/modify_delete"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="deleteSelected"
+            android:text="@string/organize_create_delete" />
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/Create_Scroll_View"

@@ -23,7 +23,7 @@
         android:layout_marginTop="20dp" />
 
     <Button 
-        android:id="@+id/admin_button" 
+        android:id="@+id/modify_add" 
         android:layout_width="match_parent" 
         android:layout_height="50dip" 
         android:layout_marginLeft="20dip" 

@@ -16,9 +16,7 @@ public class OrganizeCreateActivity extends Activity {
 
 	TableLayout station_table;
 	SQLHandler handler;
-	EditText stationNameField;
 	EditText courseNameField;
-	String stationName = "";
 	ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
 	int stationNumber = 1;
 	Spinner courseSpinner;
@@ -32,7 +30,6 @@ public class OrganizeCreateActivity extends Activity {
 		// create database object
 		handler = new SQLHandler(this);
 		courseNameField = (EditText) findViewById(R.id.editTextCourseName);
-		stationNameField = (EditText) findViewById(R.id.EditTextStationName);
 
 		// populate the spinner
 		courses = handler.getCourseIDs();

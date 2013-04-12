@@ -43,7 +43,7 @@ public class OrganizeActivity extends Activity {
 		setContentView(R.layout.activity_organize);
 		editButton = (Button) findViewById(R.id.edit_button);
 		deleteButton = (Button) findViewById(R.id.delete_button);
-		adminButton = (Button) findViewById(R.id.admin_button);
+		adminButton = (Button) findViewById(R.id.modify_add);
 
 		// create database object
 		handler = new SQLHandler(this);

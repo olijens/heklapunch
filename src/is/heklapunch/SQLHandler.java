@@ -77,8 +77,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 				+ " INTEGER, " + ORGANIZE_COURSE_ID + " INTEGER NOT NULL, "
 				+ ORGANIZE_COURSE_NAME + " TEXT NOT NULL, " + ORGANIZE_QR_VALUE
 				+ " TEXT NOT NULL, " + ORGANIZE_GPS_VALUE + " TEXT, "
-				+ "UNIQUE (" + ORGANIZE_COURSE_ID + ", " + ORGANIZE_QR_VALUE
-				+ " ), " + "UNIQUE (" + ORGANIZE_COURSE_ID + ", "
+				+ "UNIQUE (" + ORGANIZE_COURSE_ID + ", "
 				+ ORGANIZE_STATION_NUMBER + " )" + " )";
 	
 		db.execSQL(createCompetitorTable);

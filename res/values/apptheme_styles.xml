@@ -27,10 +27,11 @@
       <item name="android:background">@drawable/spinner_background_holo_dark</item>
       <item name="android:dropDownSelector">@drawable/list_selector_holo_dark</item>
   </style>
-
+    <!--
   <style name="SpinnerAppTheme.DropDown">
       <item name="android:spinnerMode">dropdown</item>
-  </style>
+  </style>
+    -->
 
   <style name="SpinnerDropDownItemAppTheme" parent="android:Widget.DropDownItem.Spinner">
       <item name="android:checkMark">@drawable/btn_radio_holo_dark</item>

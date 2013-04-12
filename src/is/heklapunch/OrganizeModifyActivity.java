@@ -7,12 +7,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -25,11 +27,11 @@ import com.google.zxing.integration.android.IntentResult;
 public class OrganizeModifyActivity extends Activity {
 	TableLayout station_table;
 	SQLHandler handler;
-	EditText stationNameField;
 	EditText courseNameField;
 	String courseName = "";
 	public ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
 	int courseID = -1;
+	int selectedRow = -1;
 
 	@Override
 	public void onBackPressed() {
@@ -55,12 +57,10 @@ public class OrganizeModifyActivity extends Activity {
 		// create database object
 		handler = new SQLHandler(this);
 		courseNameField = (EditText) findViewById(R.id.editTextCourseName);
-		stationNameField = (EditText) findViewById(R.id.EditTextStationName);
 
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		courseNameField.setImeOptions(EditorInfo.IME_ACTION_DONE);
-		stationNameField.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
 		// get the course ID from sent to us form the create screen
 		Bundle b = getIntent().getExtras();
@@ -98,30 +98,31 @@ public class OrganizeModifyActivity extends Activity {
 	// with new data in the stationList object
 	public void fillTable() {
 
+		station_table.removeAllViews();
 		TableRow row;
 		TextView t1, t2;
 		// Converting to dip unit
 		int dip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
 				(float) 1, getResources().getDisplayMetrics());
-
-		/*
-		 * if(stationNameField.getText() != null){ stationName =
-		 * stationNameField.getText().toString(); }
-		 */
-
 		Iterator<ArrayList<String>> i = stationList.iterator();
+		int index = 0;
 
 		while (i.hasNext()) {
 
 			ArrayList<?> entry = i.next();
 
 			row = new TableRow(this);
-
+			row.setClickable(true);
+			row.setPadding(0, 1, 0, 1);
+			CheckBox box = new CheckBox(this);
+			row.setId(index);
+			index++;
+			
 			t1 = new TextView(this);
 			t2 = new TextView(this);
 
-			t1.setText(entry.get(2).toString());
-			t2.setText(entry.get(1).toString());
+			t1.setText(entry.get(2).toString() + ":");
+			t2.setText(entry.get(5).toString());
 
 			t1.setTypeface(null, 1);
 			t2.setTypeface(null, 1);
@@ -130,7 +131,9 @@ public class OrganizeModifyActivity extends Activity {
 			t2.setTextSize(15);
 
 			t1.setWidth(40 * dip);
-			t2.setWidth(260 * dip);
+			t2.setWidth(220 * dip);
+			
+			row.addView(box);
 			row.addView(t1);
 			row.addView(t2);
 
@@ -138,6 +141,24 @@ public class OrganizeModifyActivity extends Activity {
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
 		}
+	}
+	
+	//check to see if courses should be deleted
+	
+	
+	//deletes selected items from station table
+	public void deleteSelected(View view)
+	{
+		for(int i = station_table.getChildCount()-1; i >= 0; i--)
+		{
+			TableRow row = (TableRow)station_table.getChildAt(i);
+			CheckBox box = (CheckBox)row.getChildAt(0);
+			if(box.isChecked())
+			{
+				stationList.remove(row.getId());
+			}
+		}
+		this.fillTable();
 	}
 
 	// Save list contents to database
@@ -166,7 +187,7 @@ public class OrganizeModifyActivity extends Activity {
 	// get highest station number in the station number list
 	public int getNextStation() {
 		// we start the stations at 30, dunno why....
-		int num = 30;
+		int num = 1;
 		Iterator<ArrayList<String>> i = stationList.iterator();
 		while (i.hasNext()) {
 			ArrayList<?> entry = i.next();
@@ -203,40 +224,28 @@ public class OrganizeModifyActivity extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, intent);
-		
+
 		if (scanResult != null && scanResult.getContents().length() != 0) {
 			// handle scan result
 			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT)
 					.show();
-			
+
 			String result = scanResult.getContents();
 			String[] stations = result.split(";");
 			String name = "";
-			String oname = "";
-			
-			// Leyfum yfirskrift
-			if(stations.length == 1) {
-				oname = stationNameField.getText().toString();
-				if(oname.length() > 0) stations[0] = oname;
-			}
-			
-			for(int i=0; i< stations.length; i++) {
+
+			for (int i = 0; i < stations.length; i++) {
 				name = stations[i];
-				this.addStation(
-					String.valueOf(-1),
-					name, 
-					String.valueOf(getNextStation()), 
-					String.valueOf(courseID), 
-					String.valueOf(courseName), 
-					name, 
-					"12345"
-				);
+				this.addStation(String.valueOf(-1), name,
+						String.valueOf(getNextStation()),
+						String.valueOf(courseID), String.valueOf(courseName),
+						name, "12345");
 			}
-			
+
 			// empty
 			TableLayout vg = (TableLayout) findViewById(R.id.Create_Station_Table);
 			vg.removeAllViews();
-			
+
 			// redraw table
 			this.fillTable();
 
