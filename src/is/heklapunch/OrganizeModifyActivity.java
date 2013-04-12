@@ -7,14 +7,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -29,24 +31,34 @@ public class OrganizeModifyActivity extends Activity {
 	SQLHandler handler;
 	EditText courseNameField;
 	String courseName = "";
+	String savedName = "";
+	Button deleteButton ;
 	public ArrayList<ArrayList<String>> stationList = new ArrayList<ArrayList<String>>();
+	public ArrayList<ArrayList<String>> savedStationList = new ArrayList<ArrayList<String>>();
 	int courseID = -1;
 	int selectedRow = -1;
+	int checkedBoxes = 0;
 
 	@Override
 	public void onBackPressed() {
-		new AlertDialog.Builder(this)
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setTitle("Loka glugga")
-				.setMessage(
-						"Ert þú viss um að þú viljir hætta? Allar óvistaðar breytingar munu fyrnast")
-				.setPositiveButton("já", new DialogInterface.OnClickListener() {
+		if (!savedStationList.equals(stationList)
+				|| !courseNameField.getText().toString().equals(savedName)) {
+			new AlertDialog.Builder(this)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setTitle("Loka glugga")
+					.setMessage(
+							"Ert þú viss um að þú viljir hætta? Allar óvistaðar breytingar munu fyrnast")
+					.setPositiveButton("já",
+							new DialogInterface.OnClickListener() {
 
-					public void onClick(DialogInterface dialog, int which) {
-						finish();
-					}
+								public void onClick(DialogInterface dialog,
+										int which) {
+									finish();
+								}
 
-				}).setNegativeButton("Nei", null).show();
+							}).setNegativeButton("Nei", null).show();
+		} else
+			finish();
 	}
 
 	@Override
@@ -57,6 +69,8 @@ public class OrganizeModifyActivity extends Activity {
 		// create database object
 		handler = new SQLHandler(this);
 		courseNameField = (EditText) findViewById(R.id.editTextCourseName);
+		deleteButton = (Button) findViewById(R.id.modify_delete);
+		deleteButton.setEnabled(false);
 
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -72,11 +86,14 @@ public class OrganizeModifyActivity extends Activity {
 		// exists
 		if (courseID != -1 && handler.checkCoursebyID(courseID)) {
 			stationList = handler.getCoursebyID(courseID);
+			savedStationList = (ArrayList<ArrayList<String>>) stationList
+					.clone();
 			// find the course name
 			CourseData[] courseIDs = handler.getCourseIDs();
 			for (int i = 0; i < courseIDs.length; i++) {
 				if (Integer.valueOf(courseIDs[i].getValue()) == courseID) {
 					courseName = handler.getCourseIDs()[i].getSpinnerText();
+					savedName = courseName;
 					break;
 				}
 			}
@@ -97,7 +114,9 @@ public class OrganizeModifyActivity extends Activity {
 	// work
 	// with new data in the stationList object
 	public void fillTable() {
-
+		//new table clears out all checkboxes
+		checkedBoxes =0;
+		deleteButton.setEnabled(false);
 		station_table.removeAllViews();
 		TableRow row;
 		TextView t1, t2;
@@ -115,9 +134,29 @@ public class OrganizeModifyActivity extends Activity {
 			row.setClickable(true);
 			row.setPadding(0, 1, 0, 1);
 			CheckBox box = new CheckBox(this);
+			box.setOnCheckedChangeListener(new OnCheckedChangeListener()
+			{
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+				{
+					if(isChecked)
+					{
+						checkedBoxes++;
+					}
+					else
+					{
+						checkedBoxes--;
+					}
+					if(checkedBoxes == 0){
+						deleteButton.setEnabled(false);
+					}
+					else deleteButton.setEnabled(true);
+				}
+				
+			});
+			
 			row.setId(index);
 			index++;
-			
+
 			t1 = new TextView(this);
 			t2 = new TextView(this);
 
@@ -132,7 +171,7 @@ public class OrganizeModifyActivity extends Activity {
 
 			t1.setWidth(40 * dip);
 			t2.setWidth(220 * dip);
-			
+
 			row.addView(box);
 			row.addView(t1);
 			row.addView(t2);
@@ -142,40 +181,69 @@ public class OrganizeModifyActivity extends Activity {
 
 		}
 	}
-	
-	//check to see if courses should be deleted
-	
-	
-	//deletes selected items from station table
-	public void deleteSelected(View view)
-	{
-		for(int i = station_table.getChildCount()-1; i >= 0; i--)
-		{
-			TableRow row = (TableRow)station_table.getChildAt(i);
-			CheckBox box = (CheckBox)row.getChildAt(0);
-			if(box.isChecked())
-			{
+
+	// re-numbers the station list to make the station numbers correct
+	public void fixStationNumbers() {
+		Iterator<ArrayList<String>> i = stationList.iterator();
+		int index = 0;
+		while (i.hasNext()) {
+			ArrayList<String> tempStation = i.next();
+			tempStation.set(2, String.valueOf(index + 1));
+			stationList.set(index, tempStation);
+			index++;
+		}
+	}
+
+	// deletes selected items from station table
+	public void deleteSelected(View view) {
+		for (int i = station_table.getChildCount() - 1; i >= 0; i--) {
+			TableRow row = (TableRow) station_table.getChildAt(i);
+			CheckBox box = (CheckBox) row.getChildAt(0);
+			if (box.isChecked()) {
 				stationList.remove(row.getId());
 			}
 		}
+		fixStationNumbers();
 		this.fillTable();
 	}
 
 	// Save list contents to database
 	public void saveList(View view) {
-		String courseTitle = courseNameField.getText().toString();
-		Iterator<ArrayList<String>> i = stationList.iterator();
-		handler.removeCourseByID(courseID);
-		while (i.hasNext()) {
-			ArrayList<?> entry = i.next();
-			int stationNumber = Integer.valueOf(entry.get(2).toString());
-			String stationTitle = entry.get(1).toString();
-			String QRValue = entry.get(5).toString();
-			String GPSValue = entry.get(6).toString();
-			handler.addStation(courseTitle, courseID, stationTitle,
-					stationNumber, QRValue, GPSValue);
+		if (stationList.isEmpty()) {
+			new AlertDialog.Builder(this)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setTitle("Tóm braut")
+					.setMessage("Brautin inniheldur engar stöðvar.")
+					.setPositiveButton("ok",
+							new DialogInterface.OnClickListener() {
+
+								public void onClick(DialogInterface dialog,
+										int which) {
+									
+								}
+
+							}).show();
 		}
-		this.finish();
+		
+		else {
+			savedStationList = (ArrayList<ArrayList<String>>) stationList
+					.clone();
+			String courseTitle = courseNameField.getText().toString();
+			savedName = courseTitle;
+			Iterator<ArrayList<String>> i = stationList.iterator();
+			handler.removeCourseByID(courseID);
+			while (i.hasNext()) {
+				ArrayList<?> entry = i.next();
+				int stationNumber = Integer.valueOf(entry.get(2).toString());
+				String stationTitle = entry.get(1).toString();
+				String QRValue = entry.get(5).toString();
+				String GPSValue = entry.get(6).toString();
+				handler.addStation(courseTitle, courseID, stationTitle,
+						stationNumber, QRValue, GPSValue);
+			}
+			Toast.makeText(this, "Vistað", Toast.LENGTH_SHORT).show();
+			this.finish();
+		}
 	}
 
 	// Go to QR mode

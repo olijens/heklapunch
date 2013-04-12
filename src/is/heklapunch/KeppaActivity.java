@@ -363,7 +363,7 @@ public class KeppaActivity extends Activity {
 		this.time = jsonResult.milliseconds_since_epoch;
 	}
 	
-	
+	/*
 	
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -388,5 +388,5 @@ public class KeppaActivity extends Activity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
+*/
 }

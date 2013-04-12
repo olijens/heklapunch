@@ -75,7 +75,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 				+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ ORGANIZE_STATION_NAME + " TEXT, " + ORGANIZE_STATION_NUMBER
 				+ " INTEGER, " + ORGANIZE_COURSE_ID + " INTEGER NOT NULL, "
-				+ ORGANIZE_COURSE_NAME + " TEXT NOT NULL, " + ORGANIZE_QR_VALUE
+				+ ORGANIZE_COURSE_NAME + " TEXT, " + ORGANIZE_QR_VALUE
 				+ " TEXT NOT NULL, " + ORGANIZE_GPS_VALUE + " TEXT, "
 				+ "UNIQUE (" + ORGANIZE_COURSE_ID + ", "
 				+ ORGANIZE_STATION_NUMBER + " )" + " )";
@@ -119,8 +119,6 @@ public class SQLHandler extends SQLiteOpenHelper {
 		} catch (Exception e) {
 
 		}
-		// if we want a throw use the line below, if not use the line after that
-		// db.insertOrThrow(ORGANIZE_TABLE_NAME, null, values);
 		db.insert(ORGANIZE_TABLE_NAME, null, values);
 		db.close();
 	}
