@@ -51,6 +51,7 @@
     <string name="secure_connect">Tengjast tæki - Örugg tenging</string>
     <string name="insecure_connect">Tengjast tæki - Opin tenging</string>
     <string name="discoverable">Gera sýnilegt</string>
+    <string name="main_test">Prufa QR kóða</string>
     
      <!-- keppa Menu -->
     <string name="keppa_senda">Senda hlaup</string>

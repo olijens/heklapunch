@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -55,7 +56,7 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu)
     {
         MenuInflater menuInflater = getMenuInflater();
-        //menuInflater.inflate(R.layout.menu, menu);
+        menuInflater.inflate(R.menu.main_menu, menu);
         return true;
     }
     
@@ -86,5 +87,19 @@ public class MainActivity extends Activity {
 		editor.putInt("selection-end", editBox.getSelectionEnd());
 		editor.commit();
 	}
+	
+		
+	@Override
+    //Handle menu clicks
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.main_test:
+               this.test_qr(this.getCurrentFocus());
+                return true;                
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }

@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/keppa_senda"    
+          android:title="@string/keppa_senda" />
+	<item android:id="@+id/keppa_henda"
+          android:title="@string/keppa_henda" />
+</menu>
