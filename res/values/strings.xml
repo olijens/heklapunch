@@ -10,7 +10,7 @@
     <string name="organize_efst">Umsjón</string>
     <string name="organize_new_track_button">Gera nýja braut</string>
     <string name="organize_manage_race">Stýra keppni</string>
-    <string name="organize_receive_data_button">Taka á móti gögnum</string>
+    <string name="organize_receive_data_button">Sækja hlaup</string>
     <string name="organize_courses_button">Umsýsla brauta</string>
     <string name="organize_modify_data_button">Breyta braut</string>
     <string name="organize_modify_data_efst">Smíða braut</string>
@@ -29,6 +29,7 @@
     <string name="delete_keppandi">Henda stöðvum</string>
     <string name="keppa_activity_title">Keppnishamur</string>
     <string name="title_activity_qr">QRActivity</string>
+    <string name="title_activity_getdata">Stýra keppni</string>
     <string name="testqr_button">Prófa QR</string>
     <string name="title_activity_send">SendActivity</string>
     <string name="title_activity_send_json">Senda gögn á vefþjón</string>
@@ -57,6 +58,9 @@
     <string name="keppa_senda">Senda hlaup</string>
     <string name="keppa_hlada">Hlaða upp gögnum</string>
     <string name="keppa_henda">Henda stöðvum</string>
+    
+    <!-- getdata Menu -->
+    <string name="getdata_henda">Henda niðurstöðum</string>
 
     <string name="sending">Sendi gögn...</string>
     <string name="send">Senda</string>

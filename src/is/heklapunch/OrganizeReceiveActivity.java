@@ -19,15 +19,7 @@ public class OrganizeReceiveActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		//grabs the courses DATABASE id from the extras bundle
-		int courseID = -1;
-		Bundle b = getIntent().getExtras();
-		if (b.containsKey("courseID")) {
-			courseID = b.getInt("courseID");
-		}
-		
-		//
+
 		if (mServer == null) {
 			mServer = new BlueToothServer(this, null);
 		}
@@ -79,4 +71,6 @@ public class OrganizeReceiveActivity extends Activity {
 		}
 		if(DEBUG) Log.e(TAG, "--- ON DESTROY ---");
 	}
+	
+
 }

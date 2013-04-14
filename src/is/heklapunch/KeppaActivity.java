@@ -66,10 +66,6 @@ public class KeppaActivity extends Activity {
 		// create database object
 		handler = new SQLHandler(this);
 		
-		// Setjum hvaða braut er active
-		//brautTitle = (TextView) findViewById(R.id.keppa_valin_braut);
-		//brautTitle.setText("Valin braut: FIXME");
-		
 		// Set time object
 		this.fillTime();
 
@@ -167,31 +163,34 @@ public class KeppaActivity extends Activity {
 
 		Iterator<ArrayList<String>> i = results.iterator();
 		
-		//Make header for table
-		TextView h1, h2, h3;
-		row = new TableRow(this);
-		h1 = new TextView(this);
-		h2 = new TextView(this);
-		h3 = new TextView(this);
-		
-		h1.setText("Stöð");
-		h2.setText("Tími");
-		h3.setText("Millitími");
-		
-		h1.setTextSize(17);
-		h2.setTextSize(17);
-		h3.setTextSize(17);
-		
-		h1.setTextColor(Color.WHITE);
-		h2.setTextColor(Color.WHITE);
-		h3.setTextColor(Color.WHITE);
-		
-		row.addView(h1);
-		row.addView(h2);
-		row.addView(h3);
-		
-		station_table.addView(row, new TableLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		// Make header for table if there are results
+		if (i.hasNext()) {
+			
+			TextView h1, h2, h3;
+			row = new TableRow(this);
+			h1 = new TextView(this);
+			h2 = new TextView(this);
+			h3 = new TextView(this);
+
+			h1.setText("Stöð");
+			h2.setText("Tími");
+			h3.setText("Millitími");
+
+			h1.setTextSize(17);
+			h2.setTextSize(17);
+			h3.setTextSize(17);
+
+			h1.setTextColor(Color.WHITE);
+			h2.setTextColor(Color.WHITE);
+			h3.setTextColor(Color.WHITE);
+
+			row.addView(h1);
+			row.addView(h2);
+			row.addView(h3);
+
+			station_table.addView(row, new TableLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		}
 		
 		Long temp = new Long("0");
 		

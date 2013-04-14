@@ -56,7 +56,8 @@ public class SQLHandler extends SQLiteOpenHelper {
 		String  createStandingTable = "CREATE TABLE " + STANDING_TABLE_NAME
 				+ "("
 				+ RESULT_COMPETITOR_NAME + " TEXT NOT NULL,"
-				+ TOTAL_TIME + " TEXT NOT NULL" 
+				+ TOTAL_TIME + " TEXT NOT NULL," 
+				+ ORGANIZE_COURSE_ID + " INT NOT NULL" 
 				+ " " + ", UNIQUE (" + RESULT_COMPETITOR_NAME + ", "
 				+ TOTAL_TIME + " )" + " )";
 		
@@ -258,7 +259,7 @@ public class SQLHandler extends SQLiteOpenHelper {
 		}
 	}
 	
-	// returns array containing the course names and corrisponding courseIDs
+	// returns array containing the course names and corresponding courseIDs
 	public CourseData[] getCourseIDs(){
         String query = "SELECT " +ORGANIZE_COURSE_ID + ", " + ORGANIZE_COURSE_NAME + " FROM " + ORGANIZE_TABLE_NAME + " GROUP BY " + ORGANIZE_COURSE_ID ;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -324,7 +325,6 @@ public class SQLHandler extends SQLiteOpenHelper {
 	public void deleteResults() {
 			SQLiteDatabase db = this.getWritableDatabase();
 			db.delete(RESULT_TABLE_NAME, null, null);
-			db.delete(STANDING_TABLE_NAME, null, null);
 			db.close();
 	}
 
@@ -440,27 +440,35 @@ public class SQLHandler extends SQLiteOpenHelper {
 	}
 	
 	// Add to final standing table
-	public void addStanding(String name, String time) throws SQLException {
+	public void addStanding(String name, String time, int id) throws SQLException {
 		SQLiteDatabase db = this.getWritableDatabase();
 		// generate and send command
 		ContentValues values = new ContentValues();
 		try {			
 			values.put(RESULT_COMPETITOR_NAME, name);
-			values.put(TOTAL_TIME, time);		
+			values.put(TOTAL_TIME, time);
+			values.put(ORGANIZE_COURSE_ID, id);
 		} catch (Exception e) {
 
 		}
 		db.insert(STANDING_TABLE_NAME, null, values);
 		db.close();
 	}
+
+	//Clear data from standings table
+	public void clearStandings(int id) throws SQLException {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(STANDING_TABLE_NAME, ORGANIZE_COURSE_ID + " =?", new String[] { String.valueOf(id) });
+		db.close();
+	}
 	
 	// Get all current results
-	public ArrayList<ArrayList<String>> getAllStandings() {
+	public ArrayList<ArrayList<String>> getAllStandings(int id) {
 
 		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery("SELECT * FROM " + STANDING_TABLE_NAME
-				+ " ORDER BY " + TOTAL_TIME, null);
+				+" WHERE " + ORGANIZE_COURSE_ID + " = "  + String.valueOf(id) + " ORDER BY " + TOTAL_TIME, null);
 		if (cursor.moveToFirst()) {
 			do {
 				ArrayList<String> station = new ArrayList<String>();

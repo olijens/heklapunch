@@ -73,6 +73,10 @@
             android:name="is.heklapunch.BtDeviceListActivity"
             android:label="@string/title_activity_blue_tooth" >
         </activity>
+        <activity
+            android:name="is.heklapunch.GetDataActivity"
+            android:label="@string/title_activity_getdata" >
+        </activity>
     </application>
 
 </manifest>
