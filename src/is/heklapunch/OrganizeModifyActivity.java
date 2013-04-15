@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -63,6 +64,7 @@ public class OrganizeModifyActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_organize_modify);
 
@@ -293,7 +295,9 @@ public class OrganizeModifyActivity extends Activity {
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, intent);
 
-		if (scanResult != null && scanResult.getContents().length() != 0) {
+		if (scanResult != null 
+				&& scanResult.getContents() != null
+				&& scanResult.getContents().length() != 0) {
 			// handle scan result
 			Toast.makeText(this, scanResult.getContents(), Toast.LENGTH_SHORT)
 					.show();
