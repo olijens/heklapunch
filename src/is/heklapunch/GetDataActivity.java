@@ -59,7 +59,7 @@ public class GetDataActivity extends Activity {
 
 	// Delete all stations from the view and db
 	public void delete_results(View view) {
-		handler.deleteResults();
+		handler.clearStandings(this.courseID);
 		// redraw view
 		TableLayout vg = (TableLayout) findViewById(R.id.receive_table);
 		vg.removeAllViews();
