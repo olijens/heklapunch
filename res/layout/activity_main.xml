@@ -9,7 +9,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="100dip"
-        android:text="@string/hello_world" />
+        android:text="@string/hello_world" 
+        android:textColor="#FFFFFF"/>
 
     <Button
         android:layout_width="match_parent"
@@ -47,7 +48,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/saved_name"
                 android:textSize="20sp"
-                android:textStyle="normal" />
+                android:textStyle="normal"
+                android:textColor="#FFFFFF" />
 
             <EditText
                 android:id="@+id/saved_name"
@@ -60,7 +62,8 @@
                 android:lines="1"
                 android:maxLines="1"
                 android:maxWidth="150dip"
-                android:minWidth="230dip" >
+                android:minWidth="230dip"
+                android:textColor="#FFFFFF" >
             </EditText>
         </TableRow>
     </TableLayout>

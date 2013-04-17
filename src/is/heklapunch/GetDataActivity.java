@@ -49,6 +49,7 @@ public class GetDataActivity extends Activity {
 		// Setjum hvaða braut er active
 		TextView brautTitle = (TextView) findViewById(R.id.getdata_string);
 		brautTitle.setText("Valin braut: " + braut.get(0).get(4).toString());
+		brautTitle.setTextColor(Color.WHITE);
 	}
 
 	// Go to recieve mode
@@ -182,15 +183,16 @@ public class GetDataActivity extends Activity {
 			t2.setText(entry.get(1).toString());
 
 			t0.setTypeface(null, 1);
-			t0.setWidth(50);
 			t1.setTypeface(null, 1);
-			t1.setWidth(150);
 			t2.setTypeface(null, 1);
-			t2.setWidth(400);
 
 			t0.setTextSize(15);
 			t1.setTextSize(15);
 			t2.setTextSize(15);
+			
+			t1.setPadding(0, 0, 15, 0);
+			t2.setPadding(0, 0, 15, 0);
+			t0.setPadding(0, 0, 15, 0);
 
 			t0.setTextColor(Color.RED);
 			t1.setTextColor(Color.GREEN);

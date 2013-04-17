@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -167,6 +168,9 @@ public class OrganizeModifyActivity extends Activity {
 
 			t1.setTypeface(null, 1);
 			t2.setTypeface(null, 1);
+			
+			t1.setTextColor(Color.WHITE);
+			t2.setTextColor(Color.WHITE);
 
 			t1.setTextSize(15);
 			t2.setTextSize(15);

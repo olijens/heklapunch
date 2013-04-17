@@ -33,6 +33,7 @@
     -->
 
     <style name="SpinnerDropDownItemAppTheme" parent="android:Widget.DropDownItem.Spinner">
+        <item name="android:textColor">#ffffff</item>
     </style>
 
     <style name="ProgressBarAppTheme" parent="android:Widget.ProgressBar.Horizontal">

@@ -59,21 +59,25 @@ public class OrganizeActivity extends Activity {
 		courses = handler.getCourseIDs();
 		if (courses != null) {
 			courseSpinner = (Spinner) findViewById(R.id.spinner1);
+			
 			ArrayAdapter<CourseData> adapter = new ArrayAdapter<CourseData>(
 					this, android.R.layout.simple_spinner_item,
 					handler.getCourseIDs());
-			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			adapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
 			courseSpinner.setAdapter(adapter);
 			courseSpinner
 					.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 						public void onItemSelected(AdapterView<?> parent,
 								View view, int position, long id) {
+							 
 							CourseData data = courses[position];
 							selectedCourseID = Integer.valueOf(data.getValue());
 							selectedCourseName = data.getSpinnerText();
 						}
+						
 
 						public void onNothingSelected(AdapterView<?> parent) {
+							
 						}
 					});
 			if(courses.length > 0)

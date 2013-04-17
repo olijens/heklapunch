@@ -9,7 +9,8 @@
         android:layout_height="45dip"
         android:gravity="center"
         android:text="@string/organize_modify_data_efst"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:textColor="#FFFFFF" />
 
     <EditText
         android:id="@+id/editTextCourseName"
@@ -17,7 +18,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/organize_create_default_name"
-        android:maxLength="30" />
+        android:maxLength="30"
+        android:textColor="#FFFFFF" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,7 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="read_qr"
-            android:text="@string/organize_create_qr_read" />
+            android:text="@string/organize_create_qr_read"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/modify_delete"
@@ -37,7 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="deleteSelected"
-            android:text="@string/organize_create_delete" />
+            android:text="@string/organize_create_delete"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 
     <ScrollView
@@ -50,7 +54,8 @@
         <TableLayout
             android:id="@+id/Create_Station_Table"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:textColor="#FFFFFF" >
         </TableLayout>
     </ScrollView>
 
