@@ -15,52 +15,52 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	
+
 	EditText editBox;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		
-		// get name box
-		editBox = (EditText) findViewById(R.id.saved_name);
-	}
+		protected void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			setContentView(R.layout.activity_main);
+
+			// get name box
+			editBox = (EditText) findViewById(R.id.saved_name);
+		}
 
 	//Go to compete mode
-    public void keppa(View view) {
-    	
-    	if (!this.editBox.getText().toString().equals("")) {
+	public void keppa(View view) {
+
+		if (!this.editBox.getText().toString().equals("")) {
 			Intent o = new Intent(this, KeppaActivity.class);
 			startActivity(o);
 		} else {
 			Toast.makeText(this, "Nafn keppanda er nauðsynlegt",
 					Toast.LENGTH_SHORT).show();
 		}
-    }
-    
-  //Go to organize mode
-    public void organize(View view) {
-    	Intent o = new Intent(this, OrganizeActivity.class);
-        startActivity(o);
-    }
-    
-  //Go to organize mode
-    public void test_qr(View view) {
-    	Intent o = new Intent(this, QRActivity.class);
-        startActivity(o);
-    }
-    
- // Initiating Menu XML file (menu.xml)
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_menu, menu);
-        return true;
-    }
-    
-    protected void onResume() {
+	}
+
+	//Go to organize mode
+	public void organize(View view) {
+		Intent o = new Intent(this, OrganizeActivity.class);
+		startActivity(o);
+	}
+
+	//Go to organize mode
+	public void test_qr(View view) {
+		Intent o = new Intent(this, QRActivity.class);
+		startActivity(o);
+	}
+
+	// Initiating Menu XML file (menu.xml)
+	@Override
+		public boolean onCreateOptionsMenu(Menu menu)
+		{
+			MenuInflater menuInflater = getMenuInflater();
+			menuInflater.inflate(R.menu.main_menu, menu);
+			return true;
+		}
+
+	protected void onResume() {
 		super.onResume();
 		SharedPreferences prefs = this.getSharedPreferences("competitor_name",
 				Context.MODE_PRIVATE);
@@ -87,19 +87,19 @@ public class MainActivity extends Activity {
 		editor.putInt("selection-end", editBox.getSelectionEnd());
 		editor.commit();
 	}
-	
-		
+
+
 	@Override
-    //Handle menu clicks
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.main_test:
-               this.test_qr(this.getCurrentFocus());
-                return true;                
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+		//Handle menu clicks
+		public boolean onOptionsItemSelected(MenuItem item) {
+			// Handle item selection
+			switch (item.getItemId()) {
+				case R.id.main_test:
+					this.test_qr(this.getCurrentFocus());
+					return true;                
+				default:
+					return super.onOptionsItemSelected(item);
+			}
+		}
 
 }
