@@ -1,6 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/keppa_senda"    
-          android:title="@string/keppa_senda" />
+    <item android:id="@+id/senda_json" 
+          android:title="@string/senda_json" />
+    <item android:id="@+id/senda_bluetooth"    
+          android:title="@string/senda_bluetooth" />
 	<item android:id="@+id/keppa_henda"
           android:title="@string/keppa_henda" />
 </menu>

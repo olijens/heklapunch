@@ -261,7 +261,7 @@ public class KeppaActivity extends Activity {
 
 	public void send_info_json(View view) {
 			Intent o = new Intent(this, SendJSONActivity.class);
-		
+			startActivity(o);
 	}
 
 	// Go to organize mode
@@ -373,7 +373,11 @@ public class KeppaActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.keppa_senda:
+            case R.id.senda_json:
+               this.send_info_json(this.getCurrentFocus());
+               return true;
+
+            case R.id.senda_bluetooth:
                this.send_info_bt(this.getCurrentFocus());
                 return true;
                 

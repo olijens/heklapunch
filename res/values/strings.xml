@@ -24,8 +24,8 @@
     <string name="organize_create_spinner">Veldu braut</string>
     <string name="save">Vista</string>
     <string name="punch">Punch</string>
-    <string name="senda_keppandi">Senda gögn með Bluetooth</string>
-    <string name="senda_json">Hlaða upp gögnum</string>
+    <string name="senda_bluetooth">Senda gögn með Bluetooth</string>
+    <string name="senda_json">Senda gögn í gegnum netið</string>
     <string name="delete_keppandi">Henda stöðvum</string>
     <string name="keppa_activity_title">Keppnishamur</string>
     <string name="title_activity_qr">QRActivity</string>
